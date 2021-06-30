@@ -1,0 +1,18 @@
+specVersion: 0.0.1
+description: A subquery project provide dictionary data & service for a substrate-based network
+repository: 'https://github.com/subquery/subql-dictionary'
+schema: ./schema.graphql
+network:
+  endpoint: 'wss://polkadot.api.onfinality.io/public-ws'
+dataSources:
+  - name: main
+    kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler
+        - handler: handleEvent
+          kind: substrate/EventHandler
+        - handler: handleCall
+          kind: substrate/CallHandler
