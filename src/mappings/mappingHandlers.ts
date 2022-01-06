@@ -12,21 +12,24 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
 }
 
 export async function handleEvent(event: SubstrateEvent): Promise<void> {
-    const thisEvent = await Event.get(`${event.block.block.header.number}-${event.idx.toString()}`);
-    if(thisEvent === undefined){
-        const newEvent = new Event(`${event.block.block.header.number}-${event.idx.toString()}`);
-        newEvent.blockHeight = event.block.block.header.number.toBigInt();
-        newEvent.module = event.event.section;
-        newEvent.event = event.event.method;
-        await newEvent.save();
+    //skip system.ExtrinsicSuccess event
+    if(event.event.section !== 'system' && event.event.method !== 'ExtrinsicSuccess'){
+        const thisEvent = await Event.get(`${event.block.block.header.number}-${event.idx.toString()}`);
+        if(thisEvent === undefined){
+            const newEvent = new Event(`${event.block.block.header.number}-${event.idx.toString()}`);
+            newEvent.blockHeight = event.block.block.header.number.toBigInt();
+            newEvent.module = event.event.section;
+            newEvent.event = event.event.method;
+            await newEvent.save();
+        }
     }
-
 }
 
 export async function handleCall(extrinsic: SubstrateExtrinsic): Promise<void> {
-    const thisExtrinsic = await Extrinsic.get(extrinsic.extrinsic.hash.toString());
+    const thisExtrinsic = await Extrinsic.get(`${extrinsic.block.block.header.number}-${extrinsic.idx}`);
     if(thisExtrinsic === undefined){
         const newExtrinsic = new Extrinsic(extrinsic.extrinsic.hash.toString());
+        newExtrinsic.txHash = extrinsic.extrinsic.hash.toString();
         newExtrinsic.module = extrinsic.extrinsic.method.section;
         newExtrinsic.call = extrinsic.extrinsic.method.method;
         newExtrinsic.blockHeight = extrinsic.block.block.header.number.toBigInt();
