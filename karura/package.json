@@ -1,0 +1,32 @@
+{
+  "name": "subql-dictionary",
+  "version": "1.0.0",
+  "description": "A SubQuery Dictionary Project that provides increased indexing speed to all projects",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "prepack": "rm -rf dist && npm build",
+    "test": "jest",
+    "codegen": "./node_modules/.bin/subql codegen",
+    "start:docker": "docker-compose pull && docker-compose up --remove-orphans"
+  },
+  "homepage": "https://github.com/subquery/subql-dictionary",
+  "repository": "github:subquery/subql-dictionary",
+  "files": [
+    "dist",
+    "schema.graphql",
+    "project.yaml"
+  ],
+  "author": "SubQuery Network",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@polkadot/api": "^7",
+    "@subql/types": "latest",
+    "typescript": "^4.1.3",
+    "@subql/cli": "latest",
+    "@acala-network/type-definitions": "latest"
+  },
+  "exports": {
+    "chaintypes": "src/chaintypes.ts"
+  }
+}
