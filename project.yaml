@@ -1,14 +1,19 @@
-specVersion: 0.0.1
-description: A subquery project provide dictionary data & service for a substrate-based network
-repository: 'https://github.com/subquery/subql-dictionary'
-schema: ./schema.graphql
+specVersion: 0.2.0
+name: SubQuery Dictionary - Polkadot
+version: 1.0.0
+description: >-
+  A SubQuery Dictionary Project that provides increased indexing speed to all projects
+repository: https://github.com/subquery/subql-dictionary
+schema:
+  file: ./schema.graphql
 network:
-  endpoint: 'wss://polkadot.api.onfinality.io/public-ws'
+  genesisHash: "0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3"
+  endpoint: wss://polkadot.api.onfinality.io/public-ws
 dataSources:
-  - name: main
-    kind: substrate/Runtime
+  - kind: substrate/Runtime
     startBlock: 1
     mapping:
+      file: ./dist/index.js
       handlers:
         - handler: handleBlock
           kind: substrate/BlockHandler
