@@ -46,4 +46,4 @@ const definitions: OverrideBundleDefinition = {
   ]
 };
 
-export default { typesBundle: definitions };
+export default { typesBundle: { spec: { "shiden-chain": definitions }}};

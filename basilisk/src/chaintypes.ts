@@ -91,4 +91,4 @@ const definitions: OverrideBundleDefinition = {
   ]
 };
 
-export default { typesBundle: definitions };
+export default { typesBundle: { spec: { "basilisk-chain" : definitions }}};
