@@ -45,4 +45,4 @@ const definitions: OverrideBundleDefinition = {
   ]
 };
 
-export default { typesBundle: spec: {"nodle-chain": definitions}};
+export default { typesBundle: {spec: {"nodle-chain": definitions}}};
