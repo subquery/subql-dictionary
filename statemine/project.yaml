@@ -1,0 +1,18 @@
+specVersion: 0.2.0
+name: SubQuery Dictionary - Statemine
+version: 1.0.0
+description: "A SubQuery Dictionary Project that provides increased indexing speed to all projects"
+repository: https://github.com/subquery/subql-dictionary
+schema:
+  file: ./schema.graphql
+network:
+  genesisHash: "0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a"
+  endpoint: wss://statemine.api.onfinality.io/public-ws
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler
