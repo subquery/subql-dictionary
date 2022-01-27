@@ -29,4 +29,4 @@ const definitions: OverrideBundleDefinition = {
   ]
 };
 
-export default { typesBundle: { spec: { "altair-chain": definitions }}};
+export default { typesBundle: { spec: { altair: definitions }}};

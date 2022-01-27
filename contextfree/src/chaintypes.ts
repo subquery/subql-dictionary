@@ -39,4 +39,4 @@ const definitions: OverrideBundleDefinition = {
   ]
 };
 
-export default { typesBundle: { spec: {"contextfree-chain": definitions }}};
+export default { typesBundle: { spec: { contextfree: definitions }}};
