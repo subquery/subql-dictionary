@@ -1,3 +1,3 @@
-import { typesBundle } from "moonbeam-types-bundle";
+import { typesBundleDeprecated } from "moonbeam-types-bundle";
 
-export default { typesBundle };
+export default { typesBundle: typesBundleDeprecated };

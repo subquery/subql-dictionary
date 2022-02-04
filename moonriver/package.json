@@ -20,10 +20,10 @@
   "author": "SubQuery Network",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@polkadot/api": "^7",
+    "@polkadot/api": "^6",
     "@subql/cli": "latest",
     "@subql/types": "latest",
-    "moonbeam-types-bundle": "^1",
+    "moonbeam-types-bundle": "^2.0.3",
     "typescript": "4.3.2"
   },
   "exports": {
