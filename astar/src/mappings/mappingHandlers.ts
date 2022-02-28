@@ -1,59 +1,50 @@
-import { EventRecord } from "@polkadot/types/interfaces";
-import { SubstrateExtrinsic, SubstrateBlock } from "@subql/types";
-import { SpecVersion, Event, Extrinsic } from "../types";
+import {EventRecord, EvmLog} from "@polkadot/types/interfaces"
+import {SubstrateExtrinsic,SubstrateBlock} from "@subql/types";
+import { SpecVersion, Event, Extrinsic, EvmLog as EvmLogModel, EvmTransaction } from "../types";
+import FrontierEvmDatasourcePlugin, { FrontierEvmCall } from "@subql/contract-processors/dist/frontierEvm";
+import { inputToFunctionSighash, isZero, wrapExtrinsics } from "../utils";
 
 let specVersion: SpecVersion;
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
-  // Initialise Spec Version
   if (!specVersion) {
     specVersion = await SpecVersion.get(block.specVersion.toString());
   }
 
-  // Check for updates to Spec Version
-  if (!specVersion || specVersion.id !== block.specVersion.toString()) {
+  if(!specVersion || specVersion.id !== block.specVersion.toString()){
     specVersion = new SpecVersion(block.specVersion.toString());
     specVersion.blockHeight = block.block.header.number.toBigInt();
     await specVersion.save();
   }
-
-  // Process all events in block
-  const events = block.events
-    .filter(
-      (evt) =>
-        evt.event.section !== "system" &&
-        evt.event.method !== "ExtrinsicSuccess"
-    )
-    .map((evt, idx) =>
-      handleEvent(block.block.header.number.toString(), idx, evt)
-    );
-
-  // Process all calls in block
-  const calls = wrapExtrinsics(block).map((ext, idx) =>
-    handleCall(`${block.block.header.number.toString()}-${idx}`, ext)
-  );
-
-  // Save all data
+  const eventData = block.events.filter(evt => evt.event.section!=='system' && evt.event.method!=='ExtrinsicSuccess').map((evt, idx)=>handleEvent(block.block.header.number.toString(), idx, evt));
+  const events = eventData.map(([evt])=>evt);
+  const logs = eventData.map(([_,log])=>log).filter(log=>log);
+  const calls = wrapExtrinsics(block).map((ext,idx)=>handleCall(`${block.block.header.number.toString()}-${idx}`,ext));
+  const evmCalls: FrontierEvmCall[] = await Promise.all(wrapExtrinsics(block).filter(ext => ext.extrinsic.method.section === 'ethereum' && ext.extrinsic.method.method === 'transact').map( (ext) => FrontierEvmDatasourcePlugin.handlerProcessors['substrate/FrontierEvmCall'].transformer(ext, {} as any, undefined, undefined))) as any;
   await Promise.all([
-    store.bulkCreate("Event", events),
-    store.bulkCreate("Extrinsic", calls),
+    store.bulkCreate('Event', events),
+    store.bulkCreate('EvmLog', logs),
+    store.bulkCreate('Extrinsic', calls),
+    store.bulkCreate('EvmTransaction', evmCalls
+        .map((call,idx)=>handleEvmTransaction(`${block.block.header.number.toString()}-${idx}`,call))
+        .filter(tx=>tx)
+    ),
   ]);
 }
 
-function handleEvent(
-  blockNumber: string,
-  eventIdx: number,
-  event: EventRecord
-): Event {
+export function handleEvent(blockNumber: string, eventIdx: number, event: EventRecord): [Event, EvmLogModel] {
   const newEvent = new Event(`${blockNumber}-${eventIdx}`);
   newEvent.blockHeight = BigInt(blockNumber);
   newEvent.module = event.event.section;
   newEvent.event = event.event.method;
-  return newEvent;
+  const ret: [Event, EvmLogModel] = [newEvent, undefined];
+  if (event.event.section === 'evm' && event.event.method === 'Log') {
+    ret[1] = handleEvmEvent(blockNumber, eventIdx, event);
+  }
+  return ret;
 }
 
-function handleCall(idx: string, extrinsic: SubstrateExtrinsic): Extrinsic {
+export function handleCall(idx: string, extrinsic: SubstrateExtrinsic): Extrinsic {
   const newExtrinsic = new Extrinsic(idx);
-  newExtrinsic.txHash = extrinsic.extrinsic.hash.toString();
   newExtrinsic.module = extrinsic.extrinsic.method.section;
   newExtrinsic.call = extrinsic.extrinsic.method.method;
   newExtrinsic.blockHeight = extrinsic.block.block.header.number.toBigInt();
@@ -62,18 +53,31 @@ function handleCall(idx: string, extrinsic: SubstrateExtrinsic): Extrinsic {
   return newExtrinsic;
 }
 
-function wrapExtrinsics(wrappedBlock: SubstrateBlock): SubstrateExtrinsic[] {
-  return wrappedBlock.block.extrinsics.map((extrinsic, idx) => {
-    const events = wrappedBlock.events.filter(
-      ({ phase }) => phase.isApplyExtrinsic && phase.asApplyExtrinsic.eqn(idx)
-    );
-    return {
-      idx,
-      extrinsic,
-      block: wrappedBlock,
-      events,
-      success:
-        events.findIndex((evt) => evt.event.method === "ExtrinsicSuccess") > -1,
-    };
+function handleEvmEvent(blockNumber: string, eventIdx: number, event: EventRecord): EvmLogModel {
+  const [{address, data, topics}] = event.event.data as unknown as [EvmLog];
+  return EvmLogModel.create({
+    id: `${blockNumber}-${eventIdx}`,
+    address: address.toString(),
+    blockHeight: BigInt(blockNumber),
+    topics0: topics[0].toHex(),
+    topics1: topics[1]?.toHex(),
+    topics2: topics[2]?.toHex(),
+    topics3: topics[3]?.toHex(),
+  });
+}
+
+export function handleEvmTransaction(idx: string, tx: FrontierEvmCall): EvmTransaction {
+  if (!tx.hash) {
+    return;
+  }
+  const func = isZero(tx.data) ? undefined : inputToFunctionSighash(tx.data);
+  return EvmTransaction.create({
+    id: idx,
+    txHash: tx.hash,
+    from: tx.from,
+    to: tx.to,
+    func,
+    blockHeight: BigInt(tx.blockNumber.toString()),
+    success: tx.success,
   });
 }
