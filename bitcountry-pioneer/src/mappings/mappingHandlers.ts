@@ -20,8 +20,8 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
   const events = block.events
     .filter(
       (evt) =>
-        evt.event.section !== "system" &&
-        evt.event.method !== "ExtrinsicSuccess"
+        !(evt.event.section === "system" &&
+        evt.event.method === "ExtrinsicSuccess")
     )
     .map((evt, idx) =>
       handleEvent(block.block.header.number.toString(), idx, evt)
