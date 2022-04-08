@@ -127,4 +127,4 @@ const definitions: OverrideBundleDefinition = {
   ]
 };
 
-export default definitions;
+export default { typesBundle: { spec: { contextfree: definitions }}};
