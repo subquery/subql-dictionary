@@ -1,0 +1,20 @@
+specVersion: 0.2.0
+name: SubQuery Dictionary - Kylin
+version: 1.0.0
+description: "A SubQuery Dictionary Project that provides increased indexing speed to all projects"
+repository: https://github.com/subquery/subql-dictionary
+schema:
+  file: ./schema.graphql
+network:
+  genesisHash: "0xdb034d86d4228b2c5b007a7b363446cf918d473962325dd08d80995827fcc9f7"
+  endpoint: wss://pichiu-rococo-01.onebitdev.com
+  chaintypes:
+    file: ./dist/chaintypes.js
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler
