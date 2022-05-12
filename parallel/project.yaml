@@ -1,5 +1,5 @@
 specVersion: 1.0.0
-name: subql-dictionary
+name: SubQuery Dictionary - Parallel Finance
 version: 1.0.0
 runner:
   node:
