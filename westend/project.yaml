@@ -1,13 +1,22 @@
-specVersion: 0.2.0
-name: SubQuery Dictionary - Westend
+specVersion: 1.0.0
+name: subql-dictionary
 version: 1.0.0
-description: "A SubQuery Dictionary Project that provides increased indexing speed to all projects"
-repository: https://github.com/subquery/subql-dictionary
+runner:
+  node:
+    name: '@subql/node'
+    version: '*'
+  query:
+    name: '@subql/query'
+    version: '*'
+description: >-
+  A SubQuery Dictionary Project that provides increased indexing speed to all
+  projects
+repository: 'https://github.com/subquery/subql-dictionary'
 schema:
   file: ./schema.graphql
 network:
-  genesisHash: "0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e"
-  endpoint: wss://westend.api.onfinality.io/public-ws
+  chainId: '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e'
+  endpoint: 'wss://westend.api.onfinality.io/public-ws'
 dataSources:
   - kind: substrate/Runtime
     startBlock: 1
