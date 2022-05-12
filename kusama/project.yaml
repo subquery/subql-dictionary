@@ -1,5 +1,5 @@
 specVersion: 1.0.0
-name: sSubQuery Dictionary - Kusama
+name: SubQuery Dictionary - Kusama
 version: 1.0.0
 runner:
   node:
