@@ -1,13 +1,22 @@
-specVersion: 0.2.0
+specVersion: 1.0.0
 name: SubQuery Dictionary - Kusama
 version: 1.0.0
-description: "A SubQuery Dictionary Project that provides increased indexing speed to all projects"
-repository: https://github.com/subquery/subql-dictionary
+runner:
+  node:
+    name: '@subql/node'
+    version: '*'
+  query:
+    name: '@subql/query'
+    version: '*'
+description: >-
+  A SubQuery Dictionary Project that provides increased indexing speed to all
+  projects
+repository: 'https://github.com/subquery/subql-dictionary'
 schema:
   file: ./schema.graphql
 network:
-  genesisHash: "0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe"
-  endpoint: wss://kusama.api.onfinality.io/public-ws
+  chainId: '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe'
+  endpoint: 'wss://kusama.api.onfinality.io/public-ws'
 dataSources:
   - kind: substrate/Runtime
     startBlock: 1

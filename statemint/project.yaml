@@ -1,13 +1,22 @@
-specVersion: 0.2.0
+specVersion: 1.0.0
 name: SubQuery Dictionary - Statemint
 version: 1.0.0
-description: "A SubQuery Dictionary Project that provides increased indexing speed to all projects"
-repository: https://github.com/subquery/subql-dictionary
+runner:
+  node:
+    name: '@subql/node'
+    version: '*'
+  query:
+    name: '@subql/query'
+    version: '*'
+description: >-
+  A SubQuery Dictionary Project that provides increased indexing speed to all
+  projects
+repository: 'https://github.com/subquery/subql-dictionary'
 schema:
   file: ./schema.graphql
 network:
-  genesisHash: "0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f"
-  endpoint: wss://statemint.api.onfinality.io/public-ws
+  chainId: '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f'
+  endpoint: 'wss://statemint.api.onfinality.io/public-ws'
 dataSources:
   - kind: substrate/Runtime
     startBlock: 1
