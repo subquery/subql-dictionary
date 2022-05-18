@@ -7,7 +7,7 @@ schema:
   file: ./schema.graphql
 network:
   genesisHash: "0xdb034d86d4228b2c5b007a7b363446cf918d473962325dd08d80995827fcc9f7"
-  endpoint: wss://pichiu-rococo-01.onebitdev.com
+  endpoint:  wss://pichiu-rococo-01.onebitdev.com/public-ws
   chaintypes:
     file: ./dist/chaintypes.js
 dataSources:
