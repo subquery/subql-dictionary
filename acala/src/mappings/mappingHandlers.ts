@@ -50,7 +50,7 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
   const evmTransactions = await Promise.all(wrappedExtrinsics
     .filter(ex => {
       const baseFilter = acalaProcessor.handlerProcessors['substrate/AcalaEvmCall'].baseFilter[0];
-      return ex.extrinsic.method.section === baseFilter.module && ex.extrinsic.method.method === baseFilter.method;
+      return ex.extrinsic.method.section === baseFilter.module && ex.extrinsic.method.method === baseFilter.method && ex.success;
     })
     .map(ex => handleEvmTransaction(ex.idx, ex))
   );
@@ -125,7 +125,7 @@ async function handleEvmLog(blockNumber: string, event: SubstrateEvent): Promise
   });
 
   return evmLogs.map(evt => EvmLog.create({
-    id: `${blockNumber}-${evt.logIndex}`,
+    id: `${blockNumber}-${event.idx}-${evt.logIndex}`,
     address: evt.address,
     blockHeight: BigInt(blockNumber),
     topics0: evt.topics[0],
