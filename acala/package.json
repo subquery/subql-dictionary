@@ -23,7 +23,7 @@
     "@acala-network/type-definitions": "latest",
     "@polkadot/api": "^7",
     "@subql/cli": "latest",
-    "@subql/types": "file:.yalc/@subql/types",
+    "@subql/types": "^1.0.1-0",
     "@types/lodash": "^4.14.182",
     "typescript": "^4.1.3"
   },
