@@ -4,7 +4,7 @@
   "description": "A SubQuery Dictionary Project that provides increased indexing speed to all projects",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc -b",
+    "build": "subql build",
     "prepack": "rm -rf dist && npm build",
     "test": "jest",
     "codegen": "./node_modules/.bin/subql codegen",
@@ -20,12 +20,12 @@
   "author": "SubQuery Network",
   "license": "Apache-2.0",
   "resolutions": {
-    "@polkadot/api": "7.8.1",
+    "@polkadot/api": "8.2.1",
     "@polkadot/types": "7.8.1",
     "@polkadot/util": "8.4.1"
   },
   "devDependencies": {
-    "@polkadot/api": "7.8.1",
+    "@polkadot/api": "^8",
     "@subql/cli": "latest",
     "@subql/contract-processors": "0.5.3",
     "@subql/types": "latest",
