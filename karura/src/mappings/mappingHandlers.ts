@@ -1,6 +1,9 @@
 import { EventRecord } from "@polkadot/types/interfaces";
-import { SubstrateExtrinsic, SubstrateBlock } from "@subql/types";
-import { SpecVersion, Event, Extrinsic } from "../types";
+import { SubstrateExtrinsic, SubstrateBlock, SubstrateEvent } from "@subql/types";
+import { SpecVersion, Event, Extrinsic, EvmLog, EvmTransaction } from "../types";
+import acalaProcessor from '@subql/acala-evm-processor';
+import {hexDataSlice, stripZeros} from '@ethersproject/bytes';
+import { merge } from 'lodash';
 
 let specVersion: SpecVersion;
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
@@ -16,6 +19,9 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
     await specVersion.save();
   }
 
+  const wrappedExtrinsics = wrapExtrinsics(block);
+  const wrappedEvents = wrapEvents(block.events, block, wrappedExtrinsics);
+
   // Process all events in block
   const events = block.events
     .filter(
@@ -27,15 +33,34 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
       handleEvent(block.block.header.number.toString(), idx, evt)
     );
 
+  const evmLogs = await Promise.all(
+    wrappedEvents
+      .filter(evt => {
+        const baseFilter = acalaProcessor.handlerProcessors['substrate/AcalaEvmEvent'].baseFilter[0];
+        return evt.event.section === baseFilter.module && evt.event.method === baseFilter.method;
+      })
+      .map(evt => handleEvmLog(block.block.header.number.toString(), evt))
+  );
+
   // Process all calls in block
-  const calls = wrapExtrinsics(block).map((ext, idx) =>
+  const calls = wrappedExtrinsics.map((ext, idx) =>
     handleCall(`${block.block.header.number.toString()}-${idx}`, ext)
+  );
+
+  const evmTransactions = await Promise.all(wrappedExtrinsics
+    .filter(ex => {
+      const baseFilter = acalaProcessor.handlerProcessors['substrate/AcalaEvmCall'].baseFilter[0];
+      return ex.extrinsic.method.section === baseFilter.module && ex.extrinsic.method.method === baseFilter.method && ex.success;
+    })
+    .map(ex => handleEvmTransaction(ex.idx, ex))
   );
 
   // Save all data
   await Promise.all([
     store.bulkCreate("Event", events),
     store.bulkCreate("Extrinsic", calls),
+    store.bulkCreate("EvmLog", evmLogs.flat()),
+    store.bulkCreate("EvmTransaction", evmTransactions.flat()),
   ]);
 }
 
@@ -77,3 +102,62 @@ function wrapExtrinsics(wrappedBlock: SubstrateBlock): SubstrateExtrinsic[] {
     };
   });
 }
+
+function wrapEvents(events: EventRecord[], block: SubstrateBlock, extrinsics: SubstrateExtrinsic[]): SubstrateEvent[] {
+  return events.reduce((acc, event, idx) => {
+    const { phase } = event;
+    const wrappedEvent: SubstrateEvent = merge(event, { idx, block });
+    if (phase.isApplyExtrinsic) {
+      wrappedEvent.extrinsic = extrinsics[phase.asApplyExtrinsic.toNumber()];
+    }
+    acc.push(wrappedEvent);
+    return acc;
+  }, [] as SubstrateEvent[]);
+}
+
+
+async function handleEvmLog(blockNumber: string, event: SubstrateEvent): Promise<EvmLog[]> {
+
+  const evmLogs = await acalaProcessor.handlerProcessors['substrate/AcalaEvmEvent'].transformer({
+    input: event,
+    ds: null,
+    api: api as any,
+  });
+
+  return evmLogs.map(evt => EvmLog.create({
+    id: `${blockNumber}-${event.idx}-${evt.logIndex}`,
+    address: evt.address,
+    blockHeight: BigInt(blockNumber),
+    topics0: evt.topics[0],
+    topics1: evt.topics[1],
+    topics2: evt.topics[2],
+    topics3: evt.topics[3],
+  }));
+}
+
+async function handleEvmTransaction(idx: number, tx: SubstrateExtrinsic): Promise<EvmTransaction[]> {
+  const calls = await acalaProcessor.handlerProcessors['substrate/AcalaEvmCall'].transformer({
+    input: tx,
+    ds: null,
+    api: api as any,
+  });
+
+  return calls.map((call, i) => EvmTransaction.create({
+    id: `${call.blockNumber}-${idx}-${i}`,
+    txHash: call.hash,
+    from: call.from,
+    to: call.to,
+    func: isZero(call.data) ? undefined : inputToFunctionSighash(call.data),
+    blockHeight: BigInt(call.blockNumber),
+    success: tx.success,
+  }));
+}
+
+export function inputToFunctionSighash(input: string): string {
+    return hexDataSlice(input, 0, 4);
+}
+
+export function isZero(input: string): boolean {
+    return stripZeros(input).length === 0;
+}
+
