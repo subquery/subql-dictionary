@@ -1,0 +1,29 @@
+specVersion: 1.0.0
+name: SubQuery Dictionary - Acala
+version: 1.0.0
+runner:
+  node:
+    name: '@subql/node'
+    version: '*'
+  query:
+    name: '@subql/query'
+    version: '*'
+description: >-
+  A SubQuery Dictionary Project that provides increased indexing speed to all
+  projects
+repository: 'https://github.com/subquery/subql-dictionary'
+schema:
+  file: ./schema.graphql
+network:
+  chainId: '0x5c562e6300954998233c9a40b6b86f3028977e6d32d0da1af207738d19f98c1b' #mandala
+  endpoint: 'wss://node-6870830370282213376.rz.onfinality.io/ws?apikey=0f273197-e4d5-45e2-b23e-03b015cb7000'
+  chaintypes:
+    file: ./dist/chaintypes.js
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler
