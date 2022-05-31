@@ -33,5 +33,8 @@
   "dependencies": {
     "@subql/acala-evm-processor": "^0.0.2",
     "lodash": "^4.17.21"
+  },
+  "resolutions": {
+    "ipfs-unixfs": "6.0.6"
   }
 }
