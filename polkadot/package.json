@@ -24,5 +24,8 @@
     "@subql/types": "latest",
     "typescript": "^4.1.3",
     "@subql/cli": "latest"
+  },
+  "resolutions": {
+    "ipfs-unixfs": "6.0.6"
   }
 }

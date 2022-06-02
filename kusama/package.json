@@ -26,6 +26,6 @@
     "@subql/cli": "latest"
   },
   "resolutions": {
-    "ipfs-unixfs":"6.0.6"
+    "ipfs-unixfs": "6.0.6"
   }
 }

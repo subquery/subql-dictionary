@@ -6,7 +6,7 @@
 # Node artifact files
 node_modules/
 dist/
-
+yarn.lock
 
 # Compiled Java class files
 *.class
@@ -51,3 +51,4 @@ Thumbs.db
 *.wmv
 
 .data
+
