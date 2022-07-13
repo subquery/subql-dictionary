@@ -1,0 +1,35 @@
+name: "Deploy to Hosted services"
+
+on:
+  workflow_dispatch:
+    inputs:
+      directory:
+        description: 'Dictionary directory name'
+        required: true
+        type: string
+      projectName:
+        description: 'Project name'
+        required: true
+        type: string
+jobs:
+  deploy:
+    name: CLI Deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: SUBQL_ACCESS_TOKEN
+    env:
+      SUBQL_ACCESS_TOKEN: ${{ secrets.SUBQL_ACCESS_TOKEN }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2
+      with:
+        node-version: 16
+    - run: yarn
+      working-directory: ./${{github.event.inputs.directory}}
+    - name: Codegen
+      working-directory: ./${{github.event.inputs.directory}}
+      run: yarn codegen
+    - name: Publish and Deploy
+      run: |
+        sh .github/workflows/scripts/publish-deploy.sh -f ${{ github.event.inputs.directory }} -o ${{github.repository}} -r ${{github.workspace}} -p ${{github.event.inputs.projectName}}
