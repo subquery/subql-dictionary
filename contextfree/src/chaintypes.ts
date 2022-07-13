@@ -28,15 +28,6 @@ const definitions: OverrideBundleDefinition = {
         },
         BridgeTokenId: 'U256',
         BridgeChainId: 'u8',
-        VestingPlan: {
-          start_time: 'u64',
-          cliff_duration: 'u64',
-          total_duration: 'u64',
-          interval: 'u64',
-          initial_amount: 'Balance',
-          total_amount: 'Balance',
-          vesting_during_cliff: 'bool'
-        },
         ProposalId: 'u32',
         ProjectId: 'u32',
         ChainIndex: 'u32',
@@ -55,11 +46,15 @@ const definitions: OverrideBundleDefinition = {
         IpfsHash: 'Text',
         SolidityStrategy: {
           _enum: {
-            ERC20Balance: 'H160'
+            ERC20Balance: 'H160',
+            Custom: '(IpfsHash, Vec<u8>)'
           }
         },
         SubstrateStrategy: {
-          _enum: ['NativeBalance']
+          _enum: {
+            NativeBalance: 'Null',
+            Custom: '(IpfsHash, Vec<u8>)'
+          }
         },
         Strategy: {
           _enum: {
@@ -72,13 +67,13 @@ const definitions: OverrideBundleDefinition = {
           strategies: 'Vec<Strategy>'
         },
         UserGroup: {
-          owner: 'CrossChainAccount',
-          admins: 'Vec<CrossChainAccount>',
-          maintainers: 'Vec<CrossChainAccount>',
-          proposers: 'Option<Vec<CrossChainAccount>>'
+          owner: "CrossChainAccount",
+          admins: "Vec<CrossChainAccount>",
+          maintainers: "Vec<CrossChainAccount>",
+          proposers: "Option<Vec<CrossChainAccount>>"
         },
         Project: {
-          usergroup: 'UserGroup',
+          usergroup: "UserGroup",
           data: 'IpfsHash',
           workspaces: 'Vec<Workspace>'
         },
@@ -88,21 +83,21 @@ const definitions: OverrideBundleDefinition = {
         OptionIndex: 'u8',
         PrivacyLevel: {
           _enum: {
-            Opaque: 'u8',
+            Opaque: 'u8', 
             Rank: 'Null',
-            Private: 'Null',
-            Public: 'Null',
+            Private: 'Null', 
+            Public: 'Null', 
             Mixed: 'Null'
           }
         },
         VotingPower: 'U256',
         DAOProposalState: {
-          finalized: 'bool',
-          snapshots: 'Vec<Option<U256>>',
-          blacklisted: 'bool',
-          votes: 'Vec<VotingPower>',
-          pub_voters: 'Option<IpfsHash>',
-          updates: 'u32'
+          finalized: "bool",
+          snapshots: "Vec<U256>",
+          blacklisted: "bool",
+          votes: "Vec<VotingPower>",
+          pub_voters: "Option<IpfsHash>",
+          updates: "u32"
         },
         DAOProposal: {
           _author: 'CrossChainAccount',
@@ -113,7 +108,6 @@ const definitions: OverrideBundleDefinition = {
           _start: 'u64',
           _end: 'u64',
           _frequency: 'Option<u64>',
-          _workspaces: 'Vec<Workspace>',
           state: 'DAOProposalState'
         },
         VoteUpdate: {
@@ -121,10 +115,37 @@ const definitions: OverrideBundleDefinition = {
           proposal: 'ProposalId',
           votes: 'Vec<VotingPower>',
           pub_voters: 'Option<IpfsHash>'
+        },
+        GmetadataNamespaceName: 'Text',
+        GmetadataNamespaceInfo: {
+          id: 'u32',
+          name: 'Vec<u8>',
+          owners: 'Vec<AccountId>'
+        },
+        GmetadataValueInfo: {
+          data: 'Vec<u8>',
+          update_time: 'u64'
+        },
+        GmetadataIndexInfo: {
+          data: 'Vec<Vec<u8>>',
+          update_time: 'u64'
+        },
+        GmetadataKey: {
+          ns: 'u32',
+          table: 'Vec<u8>',
+          pk: 'Vec<u8>'
+        },
+        GmetadataWriteOp: {
+          _enum: {
+            SetValue: '(GmetadataKey, Vec<u8>)',
+            RemoveValue: 'GmetadataKey',
+            AddIndex: '(GmetadataKey, Vec<u8>)',
+            RemoveIndex: '(GmetadataKey, Vec<u8>)'
+          }
         }
       }
     }
   ]
 };
 
-export default { typesBundle: { spec: { contextfree: definitions }}};
+export default { typesBundle: { spec: { finitestate: definitions }}};
