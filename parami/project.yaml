@@ -1,0 +1,27 @@
+specVersion: 1.0.0
+name: SubQuery Dictionary - Parami
+version: 1.0.0
+runner:
+  node:
+    name: '@subql/node'
+    version: '*'
+  query:
+    name: '@subql/query'
+    version: '*'
+description: >-
+  A SubQuery Dictionary Project that provides increased indexing speed to all
+  projects
+repository: 'https://github.com/subquery/subql-dictionary'
+schema:
+  file: ./schema.graphql
+network:
+  chainId: '0xefce024f2032c1ec800b861a32166b4bb32b1d2950669af100effedc58927c9a'
+  endpoint: 'wss://rpc.parami.io/ws'
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler
