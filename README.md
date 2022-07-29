@@ -29,7 +29,7 @@ Visit [How the dictionary works](https://doc.subquery.network/tutorials_examples
 1. You can fork the repository
 2. Add your own dictionary project to the root directory
 3. To publish onto our hosting services, you can use the Github actions
-   1. Set a Github environment `SUBQL_ACCESS_TOKEN`
+   1. Set a Github environment `DEPLOYMENT`
    2. Set a Github secret named `SUBQL_ACCES_TOKEN` (Your token generated on https://project.subquery.network/ ) under the previously set environment 
    3. Create a project on the Hosted Services website
    4. Navigate to Github actions in your forked repository, select the workflow `Deploy to Hosted Service`
