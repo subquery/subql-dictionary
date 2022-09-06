@@ -1,10 +1,10 @@
 specVersion: 1.0.0
-name: SubQuery Dictionary - Shiden
+name: SubQuery Dictionary - Astar
 version: 1.0.0
 runner:
   node:
     name: '@subql/node'
-    version: '*'
+    version: '>=0.32.0'
   query:
     name: '@subql/query'
     version: '*'
@@ -15,13 +15,15 @@ repository: 'https://github.com/subquery/subql-dictionary'
 schema:
   file: ./schema.graphql
 network:
-  chainId: '0xf1cf9022c7ebb34b162d5b5e34e705a5a740b2d0ecc1009fb89023e62a488108'
-  endpoint: 'wss://shiden.api.onfinality.io/public-ws'
+  chainId: '0xddb89973361a170839f80f152d2e9e38a376a5a7eccefcade763f46a8e567019'
+  endpoint: 'wss://public-rpc.pinknode.io/shibuya'
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 2168192
+    startBlock: 1
     mapping:
       file: ./dist/index.js
       handlers:
         - handler: handleBlock
           kind: substrate/BlockHandler
+        - handler: handleEvent
+          kind: substrate/EventHandler
