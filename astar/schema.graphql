@@ -6,7 +6,6 @@ type SpecVersion @entity {
 
 }
 
-
 type Event @entity {
 
   id: ID!
@@ -17,7 +16,6 @@ type Event @entity {
 
   blockHeight: BigInt! @index
 }
-
 
 type Extrinsic @entity {
 
@@ -68,5 +66,35 @@ type EvmLog @entity {
   topics2: String
 
   topics3: String
+
+}
+
+type ContractsCall @entity {
+
+  id: ID!
+
+  from: String! @index
+
+  dest: String! @index #contract address
+
+  selector: String! @index
+
+  blockHeight: BigInt! @index
+
+  success: Boolean!
+
+}
+
+type ContractEmitted @entity {
+
+  id: ID!
+
+  contract: String! @index
+
+  from: String !@index
+
+  eventIndex: Int! @index
+
+  blockHeight: BigInt! @index
 
 }

@@ -20,19 +20,15 @@
   "author": "SubQuery Network",
   "license": "Apache-2.0",
   "resolutions": {
-    "@polkadot/api": "8.2.1",
-    "@polkadot/types": "7.8.1",
-    "@polkadot/util": "8.4.1",
+    "@polkadot/api": "9.2.4",
     "ipfs-unixfs": "6.0.6"
   },
   "devDependencies": {
-    "@polkadot/api": "^8",
+    "@polkadot/api": "9.2.4",
     "@subql/cli": "latest",
-    "@subql/contract-processors": "0.5.3",
+    "@subql/frontier-evm-processor": "0.1.2",
     "@subql/types": "latest",
-    "typescript": "^4.4.4"
-  },
-  "exports": {
-    "chaintypes": "src/chaintypes.ts"
+    "typescript": "^4.4.4",
+    "abab": "latest"
   }
 }
