@@ -7,6 +7,10 @@ on:
         description: 'Dictionary directory name'
         required: true
         type: string
+      projectYAML:
+        description: 'project.yaml'
+        required: false
+        type: string
       projectName:
         description: 'Project name'
         required: true
@@ -32,4 +36,4 @@ jobs:
       run: yarn codegen
     - name: Publish and Deploy
       run: |
-        sh .github/workflows/scripts/publish-deploy.sh -f ${{ github.event.inputs.directory }} -o ${{github.repository}} -r ${{github.workspace}} -p ${{github.event.inputs.projectName}}
+        sh .github/workflows/scripts/publish-deploy.sh -f ${{ github.event.inputs.directory }}/${{ github.event.inputs.projectYAML}} -o ${{github.repository}} -r ${{github.workspace}} -p ${{github.event.inputs.projectName}}
