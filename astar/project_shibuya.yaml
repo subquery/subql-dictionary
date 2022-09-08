@@ -19,7 +19,7 @@ network:
   endpoint: 'wss://public-rpc.pinknode.io/shibuya'
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 1851348
+    startBlock: 1
     mapping:
       file: ./dist/index.js
       handlers:
