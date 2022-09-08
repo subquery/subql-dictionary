@@ -1,17 +1,25 @@
 #!/bin/bash
 
-while getopts f:p:o:r: flag
+while getopts f:p:o:r:y: flag
 do
     case "${flag}" in
         f) FILE=${OPTARG};;
         p) PROJECTNAME=${OPTARG};;
         o) ORG=${OPTARG};;
         r) ROOTPATH=${OPTARG};;
-        *) echo "Usage: $0 [-f file] [-p projectname] [-o org] [-r rootpath]" && exit 1;;
+        y) YAML=${OPTARG};;
+        *) echo "Usage: $0 [-f file] [-p projectname] [-o org] [-r rootpath] [-y yaml]" && exit 1;;
     esac
 done
 
 cd "$FILE" || exit
+
+if [ "$YAML" != undefined ]
+  then
+    IPFSCID=$(npx subql publish -o -f"$ROOTPATH/$FILE/$YAML")
+  else
+    IPFSCID=$(npx subql publish -o -f "$ROOTPATH/$FILE")
+fi
 
 IPFSCID=$(npx subql publish -o -f "$ROOTPATH/$FILE")
 
