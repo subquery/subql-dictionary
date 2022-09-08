@@ -40,3 +40,4 @@ function getExtrinsicSuccess(events: EventRecord[]): boolean {
         events.findIndex((evt) => evt.event.method === 'ExtrinsicSuccess') > -1
     );
 }
+
