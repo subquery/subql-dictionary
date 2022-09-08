@@ -36,9 +36,4 @@ jobs:
       run: yarn codegen
     - name: Publish and Deploy
       run: |
-        sh .github/workflows/scripts/publish-deploy.sh |
-        -f ${{ github.event.inputs.directory }} 
-        -o ${{github.repository}} 
-        -r ${{github.workspace}} 
-        -p ${{github.event.inputs.projectName}}
-        -y ${{ github.event.inputs.projectYAML }}
+        sh .github/workflows/scripts/publish-deploy.sh -f ${{ github.event.inputs.directory }} -o ${{github.repository}} -r ${{github.workspace}} -p ${{github.event.inputs.projectName}} -y ${{ github.event.inputs.projectYAML }}
