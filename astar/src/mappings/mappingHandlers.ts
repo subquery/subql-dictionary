@@ -30,13 +30,17 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
     await specVersion.save();
   }
   const wrappedCalls = wrapExtrinsics(block);
-  const wrappedEvents = wrapEvents(wrappedCalls,block.events,block)
+  const wrappedEvents = wrapEvents(wrappedCalls,block.events.filter(
+      (evt) =>
+          !(evt.event.section === "system" &&
+              evt.event.method === "ExtrinsicSuccess")
+  ),block)
   let events=[]
   let contractEmittedEvents=[];
   let evmLogs=[];
   wrappedEvents.filter(evt => evt.event.section!=='system' && evt.event.method!=='ExtrinsicSuccess').map(event=>{
     events.push(handleEvent(event))
-    if (event.event.section === 'contracts' && event.event.method === 'ContractEmitted') {
+    if (event.event.section === 'contracts' && (event.event.method === 'ContractEmitted' || event.event.method === 'ContractExecution')) {
       contractEmittedEvents.push(handleContractsEmitted(event));
     }
     if(event.event.section === 'evm' && event.event.method === 'Log'){
