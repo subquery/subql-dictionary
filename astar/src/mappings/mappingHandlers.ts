@@ -12,9 +12,9 @@ import {
   EvmLog as EvmLogModel
 } from "../types";
 import FrontierEvmDatasourcePlugin, { FrontierEvmCall } from "@subql/frontier-evm-processor/";
-import {inputToFunctionSighash, isZero, getSelector, wrapExtrinsics, wrapEvents} from "../utils";
+import {inputToFunctionSighash, isZero, wrapExtrinsics, wrapEvents} from "../utils";
 import {ApiPromise} from "@polkadot/api";
-
+import {u8, Vec} from "@polkadot/types";
 
 let specVersion: SpecVersion;
 
@@ -67,23 +67,17 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
       evmTransactions.push(handleEvmTransaction(call.idx.toString(),frontierEvmCall))
     }
   })
-  // seems there is a concurrent limitation for promise.all and bulkCreate work together,
-  // the last entity upsertion are missed
-  // We will put them into two promise for now.
-  await Promise.all([
-    store.bulkCreate('Event', events),
-    store.bulkCreate('ContractEmitted', contractEmittedEvents),
-    store.bulkCreate('EvmLog', evmLogs),
-  ]);
-  await Promise.all([
-    store.bulkCreate('Extrinsic', calls),
-    store.bulkCreate('ContractsCall', contractCalls),
-    store.bulkCreate('EvmTransaction', evmTransactions)
-  ]);
+  // seems there is a concurrent limitation for promise.all and bulkCreate work together
+  await store.bulkCreate('Event', events)
+  await store.bulkCreate('ContractEmitted', contractEmittedEvents)
+  await store.bulkCreate('EvmLog', evmLogs)
+  await store.bulkCreate('Extrinsic', calls)
+  await store.bulkCreate('ContractsCall', contractCalls)
+  // await store.bulkCreate('EvmTransaction', evmTransactions)
 }
 
 export function handleEvent(event: SubstrateEvent): Event {
-  const newEvent = new Event(`${event.block.block.header.number.toString()}-${event.idx}`);
+  const newEvent = new Event(`${event.block.block.header.number.toString()}-${event.idx.toString()}`);
   newEvent.blockHeight = event.block.block.header.number.toBigInt();
   newEvent.module = event.event.section;
   newEvent.event = event.event.method;
@@ -102,8 +96,7 @@ export function handleCall(extrinsic: SubstrateExtrinsic): Extrinsic {
 
 function handleEvmEvent(event: SubstrateEvent): EvmLogModel {
   const [{address, data, topics}] = event.event.data as unknown as [EvmLog];
-
-  const evmLog = new EvmLogModel(`${event.block.block.header.number.toString()}-${event.idx}`)
+  const evmLog = new EvmLogModel(`${event.block.block.header.number.toString()}-${event.idx.toString()}`)
   evmLog.address = address.toString()
   evmLog.blockHeight= event.block.block.header.number.toBigInt();
   evmLog.topics0= topics[0].toHex();
@@ -118,7 +111,7 @@ export function handleEvmTransaction(idx: string, tx: FrontierEvmCall): EvmTrans
     return;
   }
   const func = isZero(tx.data) ? undefined : inputToFunctionSighash(tx.data);
-  const evmTransaction = new EvmTransaction(`${tx.blockNumber.toString()}-${idx}`)
+  const evmTransaction = new EvmTransaction(`${tx.blockNumber.toString()}-${idx.toString()}`)
   evmTransaction.txHash = tx.hash;
   evmTransaction.from = tx.from;
   evmTransaction.to= tx.to;
@@ -130,22 +123,23 @@ export function handleEvmTransaction(idx: string, tx: FrontierEvmCall): EvmTrans
 
 
 export function handleContractCalls(call:  SubstrateExtrinsic): ContractsCall {
-  const [dest,,,, data] = call.extrinsic.method.args;
-  const contractCall = new ContractsCall(`${call.block.block.header.number.toString()}-${call.idx}`)
+  const dest = call.extrinsic.args[0];
+  const data = call.extrinsic.args[4];
+  const contractCall = new ContractsCall(`${call.block.block.header.number.toString()}-${call.idx.toString()}`)
   contractCall.from = call.extrinsic.isSigned? call.extrinsic.signer.toString(): undefined;
   contractCall.success = !call.events.find(
       (evt) => evt.event.section === 'system' && evt.event.method === 'ExtrinsicFailed'
   );
   contractCall.dest = (dest as Address).toString();
   contractCall.blockHeight = call.block.block.header.number.toBigInt();
-  contractCall.selector = getSelector(data.toU8a())
+  contractCall.selector =(data as Vec<u8>).toHex().slice(0, 10)
   return contractCall;
 
 }
 
 export function handleContractsEmitted(event: SubstrateEvent):ContractEmitted{
   const [contract, data] = event.event.data as unknown as ContractEmittedResult;
-  const contractEmitted = new ContractEmitted(`${event.block.block.header.number.toString()}-${event.event.index.toString()}`);
+  const contractEmitted = new ContractEmitted(`${event.block.block.header.number.toString()}-${event.idx.toString()}`);
   contractEmitted.blockHeight = event.block.block.header.number.toBigInt();
   contractEmitted.contract= contract.toString();
   contractEmitted.from= event.extrinsic.extrinsic.isSigned? event.extrinsic.extrinsic.signer.toString(): EMPTY_ADDRESS;
