@@ -73,7 +73,7 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
   await store.bulkCreate('EvmLog', evmLogs)
   await store.bulkCreate('Extrinsic', calls)
   await store.bulkCreate('ContractsCall', contractCalls)
-  // await store.bulkCreate('EvmTransaction', evmTransactions)
+  await store.bulkCreate('EvmTransaction', evmTransactions)
 }
 
 export function handleEvent(event: SubstrateEvent): Event {
