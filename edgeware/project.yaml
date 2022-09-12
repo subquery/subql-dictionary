@@ -1,0 +1,27 @@
+specVersion: 1.0.0
+name: SubQuery Dictionary - Edgeware
+version: 1.0.0
+runner:
+  node:
+    name: '@subql/node'
+    version: '>=0.32.0'
+  query:
+    name: '@subql/query'
+    version: '*'
+description: >-
+  A SubQuery Dictionary Project that provides increased indexing speed to all
+  projects
+repository: 'https://github.com/subquery/subql-dictionary'
+schema:
+  file: ./schema.graphql
+network:
+  chainId: '0x742a2ca70c2fda6cee4f8df98d64c4c670a052d9568058982dad9d5a7a135c5b'
+  endpoint: 'wss://edgeware.api.onfinality.io/public-ws'
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler
