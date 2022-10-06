@@ -26,7 +26,7 @@
     "ipfs-unixfs": "6.0.6"
   },
   "devDependencies": {
-    "@polkadot/api": "9.4.2",
+    "@polkadot/api": "^9",
     "@subql/types":"latest",
     "typescript": "^4.6.2",
     "@subql/cli": "latest",
