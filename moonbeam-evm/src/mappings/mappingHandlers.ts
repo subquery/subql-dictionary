@@ -1,7 +1,7 @@
 import {EventRecord, EvmLog} from "@polkadot/types/interfaces"
 import {SubstrateExtrinsic,SubstrateBlock} from "@subql/types";
 import { SpecVersion, Event, Extrinsic, EvmLog as EvmLogModel, EvmTransaction } from "../types";
-import MoonbeamDatasourcePlugin, { MoonbeamCall } from "@subql/contract-processors/dist/moonbeam";
+import FrontierEvmDatasourcePlugin, { FrontierEvmCall } from "@subql/frontier-evm-processor/";
 import { inputToFunctionSighash, isZero, wrapExtrinsics } from "../utils";
 
 let specVersion: SpecVersion;
@@ -19,7 +19,7 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
     const events = eventData.map(([evt])=>evt);
     const logs = eventData.map(([_,log])=>log).filter(log=>log);
     const calls = wrapExtrinsics(block).map((ext,idx)=>handleCall(`${block.block.header.number.toString()}-${idx}`,ext));
-    const evmCalls: MoonbeamCall[] = await Promise.all(wrapExtrinsics(block).filter(ext => ext.extrinsic.method.section === 'ethereum' && ext.extrinsic.method.method === 'transact').map( (ext) => MoonbeamDatasourcePlugin.handlerProcessors['substrate/MoonbeamCall'].transformer(ext, {} as any, undefined, undefined))) as any;
+    const evmCalls: FrontierEvmCall[] = await Promise.all(wrapExtrinsics(block).filter(ext => ext.extrinsic.method.section === 'ethereum' && ext.extrinsic.method.method === 'transact').map( (ext) => FrontierEvmDatasourcePlugin.handlerProcessors['substrate/MoonbeamCall'].transformer(ext, {} as any, undefined, undefined))) as any;
     await Promise.all([
         store.bulkCreate('Event', events),
         store.bulkCreate('EvmLog', logs),
@@ -66,7 +66,7 @@ function handleEvmEvent(blockNumber: string, eventIdx: number, event: EventRecor
     });
 }
 
-export function handleEvmTransaction(idx: string, tx: MoonbeamCall): EvmTransaction {
+export function handleEvmTransaction(idx: string, tx: FrontierEvmCall): EvmTransaction {
     if (!tx.hash) {
         return;
     }
