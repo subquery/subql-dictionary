@@ -104,14 +104,14 @@ function handleEvmEvent(event: SubstrateEvent): EvmLogModel {
   let address;
   let data;
   let topics;
+  const [log] = event.event.data as unknown as [{log:EvmLog} | EvmLog]
 
-  if(event.event.data.length === 1){
-    //decode as ethereum:log:log
-    const log = event.event.data as unknown as {log:EvmLog}
-    address = log.log.address;
-    topics = log.log.topics;
+  if((log as EvmLog).address){
+    [{address, data, topics}] = log as unknown as [EvmLog];
   }else{
-    [{address, data, topics}] = event.event.data as unknown as [EvmLog];
+    address = (log as {log: EvmLog}).log.address;
+    topics = (log as {log: EvmLog}).log.topics;
+    // data = (log as {log: EvmLog}).log.data;
   }
 
   const evmLog = new EvmLogModel(`${event.block.block.header.number.toString()}-${event.idx}`)
