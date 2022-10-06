@@ -20,6 +20,8 @@ network:
 dataSources:
   - kind: substrate/Runtime
     startBlock: 1
+    processor:
+      file: ./node_modules/@subql/frontier-evm-processor/dist/bundle.js
     mapping:
       file: ./dist/index.js
       handlers:

@@ -31,6 +31,6 @@
     "typescript": "^4.6.2",
     "@subql/cli": "latest",
     "moonbeam-types-bundle": "^2.0.7",
-    "@subql/frontier-evm-processor": "^0.1.2"
+    "@subql/frontier-evm-processor": "latest"
   }
 }
