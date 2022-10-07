@@ -102,18 +102,17 @@ export function handleCall(extrinsic: SubstrateExtrinsic): Extrinsic {
 
 function handleEvmEvent(event: SubstrateEvent): EvmLogModel {
   let address;
-  let data;
+  // let data;
   let topics;
   const [log] = event.event.data as unknown as [{log:EvmLog} | EvmLog]
 
   if((log as EvmLog).address){
-    [{address, data, topics}] = log as unknown as [EvmLog];
-
+    address = (log as EvmLog).address
+    topics = (log as EvmLog).topics
   }else{
     address = (log as {log: EvmLog}).log.address;
     topics = (log as {log: EvmLog}).log.topics;
   }
-
   const evmLog = new EvmLogModel(`${event.block.block.header.number.toString()}-${event.idx}`)
   evmLog.address = address.toString()
   evmLog.blockHeight= event.block.block.header.number.toBigInt();
