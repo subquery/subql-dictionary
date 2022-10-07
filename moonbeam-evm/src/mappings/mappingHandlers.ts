@@ -60,8 +60,8 @@ function handleEvmEvent(blockNumber: string, eventIdx: number, event: EventRecor
     const [log] = event.event.data as unknown as [{log:EvmLog} | EvmLog]
 
     if((log as EvmLog).address){
-        [{address, data, topics}] = log as unknown as [EvmLog];
-
+        address = (log as EvmLog).address
+        topics = (log as EvmLog).topics
     }else{
         address = (log as {log: EvmLog}).log.address;
         topics = (log as {log: EvmLog}).log.topics;
