@@ -1,0 +1,36 @@
+{
+  "name": "moonbeam-dictionary",
+  "version": "0.1.0",
+  "description": "subquery diction for moonbase-alpha and moonriver",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "subql build",
+    "prepack": "rm -rf dist && npm build",
+    "test": "jest",
+    "codegen": "subql codegen",
+    "start:docker": "docker-compose pull && docker-compose up --remove-orphans"
+  },
+  "homepage": "https://github.com/subquery/moonbeam-dictionary",
+  "repository": "github:subquery/moonbeam-dictionary",
+  "files": [
+    "dist",
+    "schema.graphql",
+    "project.yaml"
+  ],
+  "exports": {
+    "chaintypes": "src/chaintypes.ts"
+  },
+  "author": "Ian He",
+  "license": "Apache-2.0",
+  "resolutions": {
+    "ipfs-unixfs": "6.0.6"
+  },
+  "devDependencies": {
+    "@polkadot/api": "^9",
+    "@subql/types":"latest",
+    "typescript": "^4.6.2",
+    "@subql/cli": "latest",
+    "moonbeam-types-bundle": "^2.0.7",
+    "@subql/frontier-evm-processor": "^0.1.2"
+  }
+}

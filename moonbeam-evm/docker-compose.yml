@@ -25,6 +25,7 @@ services:
       - ./:/app
     command:
       - -f=/app
+      - --disable-historical=true
 
   graphql-engine:
     image: onfinality/subql-query:latest
@@ -32,6 +33,7 @@ services:
       - 3000:3000
     depends_on:
       - "postgres"
+      - "subquery-node"
     restart: always
     environment:
       DB_USER: postgres
@@ -42,3 +44,4 @@ services:
     command:
       - --name=app
       - --playground
+      - --indexer=http://subquery-node:3000
