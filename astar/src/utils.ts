@@ -45,8 +45,12 @@ function getExtrinsicSuccess(events: EventRecord[]): boolean {
 
 export function getSelector(data: Uint8Array): string {
     //This should align with https://github.com/polkadot-js/api/blob/0b6f7861080c920407a346e2a3dbe64adcb07a1e/packages/api-contract/src/Abi/index.ts#L249
-    const [, trimmed] = compactStripLength(data);
-    return u8aToHex(trimmed.subarray(0, 4));
+    try {
+        const [, trimmed] = compactStripLength(data);
+        return u8aToHex(trimmed.subarray(0, 4));
+    } catch {
+        return u8aToHex(data.subarray(0, 4))
+    }
 }
 
 

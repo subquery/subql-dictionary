@@ -57,14 +57,18 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
     if (call.extrinsic.method.section === 'contracts' && call.extrinsic.method.method === 'call') {
       contractCalls.push(handleContractCalls(call));
     }
-    if (call.extrinsic.method.section === 'ethereum' && call.extrinsic.method.method === 'transact') {
-      const [frontierEvmCall] = await FrontierEvmDatasourcePlugin.handlerProcessors['substrate/FrontierEvmCall'].transformer({
-        input: call as SubstrateExtrinsic<[TransactionV2 | EthTransaction]>,
-        ds: {} as any,
-        filter: undefined,
-        api: api as ApiPromise
-      })
-      evmTransactions.push(handleEvmTransaction(call.idx.toString(),frontierEvmCall))
+    try {
+      if (call.extrinsic.method.section === 'ethereum' && call.extrinsic.method.method === 'transact') {
+        const [frontierEvmCall] = await FrontierEvmDatasourcePlugin.handlerProcessors['substrate/FrontierEvmCall'].transformer({
+          input: call as SubstrateExtrinsic<[TransactionV2 | EthTransaction]>,
+          ds: {} as any,
+          filter: undefined,
+          api: api as ApiPromise
+        })
+        evmTransactions.push(handleEvmTransaction(call.idx.toString(),frontierEvmCall))
+      }
+    } catch {
+      // Failed evm transaction skipped
     }
   })
   // seems there is a concurrent limitation for promise.all and bulkCreate work together,
