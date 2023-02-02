@@ -17,7 +17,7 @@ It scans over the network, and records the module and method for every event/ext
 ```shell
 network:
   endpoint: wss://polkadot.api.onfinality.io/public-ws
-  dictionary: https://api.subquery.network/sq/subquery/dictionary-polkadot
+  dictionary: https://api.subquery.network/sq/subquery/polkadot-dictionary
 ```
 
 # Understanding the dictionary
