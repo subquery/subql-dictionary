@@ -159,10 +159,14 @@ export function handleContractCalls(call:  SubstrateExtrinsic): ContractsCall {
 
 export function handleContractsEmitted(event: SubstrateEvent):ContractEmitted{
   const [contract, data] = event.event.data as unknown as ContractEmittedResult;
-  const contractEmitted = new ContractEmitted(`${event.block.block.header.number.toString()}-${event.event.index.toString()}`);
-  contractEmitted.blockHeight = event.block.block.header.number.toBigInt();
-  contractEmitted.contract= contract.toString();
-  contractEmitted.from= event.extrinsic.extrinsic.isSigned? event.extrinsic.extrinsic.signer.toString(): EMPTY_ADDRESS;
-  contractEmitted.eventIndex= data[0]
+
+  const contractEmitted = ContractEmitted.create({
+    id: `${event.block.block.header.number.toString()}-${event.idx}`,
+    blockHeight:  event.block.block.header.number.toBigInt(),
+    contract: contract.toString(),
+    from: event.extrinsic.extrinsic.isSigned? event.extrinsic.extrinsic.signer.toString(): EMPTY_ADDRESS,
+    eventIndex: data[0],
+  });
+
   return contractEmitted;
 }
