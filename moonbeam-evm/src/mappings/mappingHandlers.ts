@@ -1,4 +1,4 @@
-import {EventRecord, EvmLog} from "@polkadot/types/interfaces"
+import {EventRecord, EvmLog,TransactionV2, EthTransaction ,AccountId, Address} from "@polkadot/types/interfaces"
 import {SubstrateExtrinsic,SubstrateBlock} from "@subql/types";
 import { SpecVersion, Event, Extrinsic, EvmLog as EvmLogModel, EvmTransaction } from "../types";
 import FrontierEvmDatasourcePlugin, { FrontierEvmCall } from "@subql/frontier-evm-processor/";
@@ -19,7 +19,12 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
     const events = eventData.map(([evt])=>evt);
     const logs = eventData.map(([_,log])=>log).filter(log=>log);
     const calls = wrapExtrinsics(block).map((ext,idx)=>handleCall(`${block.block.header.number.toString()}-${idx}`,ext));
-    const evmCalls: FrontierEvmCall[] = await Promise.all(wrapExtrinsics(block).filter(ext => ext.extrinsic.method.section === 'ethereum' && ext.extrinsic.method.method === 'transact').map( (ext) => FrontierEvmDatasourcePlugin.handlerProcessors['substrate/MoonbeamCall'].transformer(ext, {} as any, undefined, undefined))) as any;
+    const evmCalls: FrontierEvmCall[] = await Promise.all(wrapExtrinsics(block).filter(ext => ext.extrinsic.method.section === 'ethereum' && ext.extrinsic.method.method === 'transact').map( (ext) => FrontierEvmDatasourcePlugin.handlerProcessors['substrate/FrontierEvmCall'].transformer({
+        input: ext as SubstrateExtrinsic<[TransactionV2 | EthTransaction]>,
+        ds:{} as any,
+        filter: undefined,
+        api: undefined}
+    ))) as any;
     await Promise.all([
         store.bulkCreate('Event', events),
         store.bulkCreate('EvmLog', logs),
