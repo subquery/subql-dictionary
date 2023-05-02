@@ -28,7 +28,7 @@
   "devDependencies": {
     "@polkadot/api": "^9",
     "@subql/cli": "latest",
-    "@subql/frontier-evm-processor": "latest",
+    "@subql/frontier-evm-processor": "0.1.3-0",
     "@subql/types": "latest",
     "abab": "latest",
     "moonbeam-types-bundle": "^2.0.7",

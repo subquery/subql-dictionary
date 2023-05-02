@@ -19,12 +19,12 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
     const events = eventData.map(([evt])=>evt);
     const logs = eventData.map(([_,log])=>log).filter(log=>log);
     const calls = wrapExtrinsics(block).map((ext,idx)=>handleCall(`${block.block.header.number.toString()}-${idx}`,ext));
-    const evmCalls: FrontierEvmCall[] = await Promise.all(wrapExtrinsics(block).filter(ext => ext.extrinsic.method.section === 'ethereum' && ext.extrinsic.method.method === 'transact').map( (ext) => FrontierEvmDatasourcePlugin.handlerProcessors['substrate/FrontierEvmCall'].transformer({
+    const evmCalls = await Promise.all(wrapExtrinsics(block).filter(ext => ext.extrinsic.method.section === 'ethereum' && ext.extrinsic.method.method === 'transact').map( (ext) => FrontierEvmDatasourcePlugin.handlerProcessors['substrate/FrontierEvmCall'].transformer({
         input: ext as SubstrateExtrinsic<[TransactionV2 | EthTransaction]>,
         ds:{} as any,
         filter: undefined,
         api: undefined}
-    ))) as any;
+    ))) as [FrontierEvmCall][];
     await Promise.all([
         store.bulkCreate('Event', events),
         store.bulkCreate('EvmLog', logs),
@@ -82,7 +82,8 @@ function handleEvmEvent(blockNumber: string, eventIdx: number, event: EventRecor
     });
 }
 
-export function handleEvmTransaction(idx: string, tx: FrontierEvmCall): EvmTransaction {
+export function handleEvmTransaction(idx: string, transaction: [FrontierEvmCall]): EvmTransaction {
+    const [tx] = transaction
     if (!tx.hash) {
         return;
     }
