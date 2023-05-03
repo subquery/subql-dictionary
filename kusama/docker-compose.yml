@@ -25,7 +25,6 @@ services:
       - ./:/app
     command:
       - -f=/app
-      - --disable-historical=true
 
   graphql-engine:
     image: onfinality/subql-query:latest

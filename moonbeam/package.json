@@ -1,14 +1,13 @@
 {
-  "name": "subql-dictionary",
-  "version": "1.0.0",
-  "description": "A SubQuery Dictionary Project that provides increased indexing speed to all projects",
+  "name": "moonbeam-dictionary",
+  "version": "0.1.0",
+  "description": "subquery dictionary for moonbase-alpha and moonriver",
   "main": "dist/index.js",
   "scripts": {
     "build": "subql build",
     "prepack": "rm -rf dist && npm build",
-    "deploy": "subql publish",
     "test": "jest",
-    "codegen": "./node_modules/.bin/subql codegen",
+    "codegen": "subql codegen",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans"
   },
   "homepage": "https://github.com/subquery/subql-dictionary",
@@ -18,15 +17,21 @@
     "schema.graphql",
     "project.yaml"
   ],
-  "author": "SubQuery Network",
-  "license": "Apache-2.0",
-  "devDependencies": {
-    "@polkadot/api": "^9",
-    "@subql/types": "latest",
-    "typescript": "^4.1.3",
-    "@subql/cli": "latest"
+  "exports": {
+    "chaintypes": "src/chaintypes.ts"
   },
+  "author": "Ian He",
+  "license": "Apache-2.0",
   "resolutions": {
     "ipfs-unixfs": "6.0.6"
+  },
+  "devDependencies": {
+    "@polkadot/api": "^9",
+    "@subql/cli": "latest",
+    "@subql/frontier-evm-processor": "dev",
+    "@subql/types": "latest",
+    "abab": "latest",
+    "moonbeam-types-bundle": "^2.0.7",
+    "typescript": "^4.6.2"
   }
 }
