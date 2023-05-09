@@ -1,0 +1,27 @@
+specVersion: 1.0.0
+name: SubQuery Dictionary - Astar
+version: 1.0.0
+runner:
+  node:
+    name: '@subql/node'
+    version: '>=2.0.0'
+  query:
+    name: '@subql/query'
+    version: '>=1.11.2'
+description: >-
+  A SubQuery Dictionary Project that provides increased indexing speed to all
+  projects
+repository: 'https://github.com/subquery/subql-dictionary'
+schema:
+  file: ./schema.graphql
+network:
+  chainId: '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6'
+  endpoint: 'wss://astar.api.onfinality.io/public-ws'
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler
