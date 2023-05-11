@@ -1,11 +1,39 @@
 import {EventRecord, EvmLog,TransactionV2, EthTransaction ,AccountId, Address} from "@polkadot/types/interfaces"
 import {SubstrateExtrinsic,SubstrateBlock} from "@subql/types";
-import { SpecVersion, Event, Extrinsic, EvmLog as EvmLogModel, EvmTransaction } from "../types";
+import { SpecVersion, Event, Extrinsic, EvmLog as EvmLogModel, EvmTransaction, ChainAliases } from "../types";
 import FrontierEvmDatasourcePlugin, { FrontierEvmCall } from "@subql/frontier-evm-processor/";
 import { inputToFunctionSighash, isZero, wrapExtrinsics } from "../utils";
 
+const evmChainId: Record<string, string> = {
+    '0xfe58ea77779b7abda7da4ec526d14db9b1e9cd40a217c34892af80a9b332b76d': '1284',
+    '0x401a1f9dca3da46f5c4091016c8a2f26dcea05865116b286f60f668207d1474b': '1285',
+    '0x91bc6e169807aaa54802737e1c504b2577d4fafedd5a02c10293b1cd60e39527': '1287',
+}
+
+let checkedAliases = false;
+
+async function setAliases(): Promise<void> {
+    if (checkedAliases) return;
+
+    const chainId = (global as any).chainId;
+    if(!evmChainId[chainId]) {
+        checkedAliases = true;
+        return;
+    }
+
+    const chianAliases = ChainAliases.create({
+        id: 'evmChainId',
+        value: evmChainId[chainId]
+    });
+
+    await chianAliases.save();
+
+    checkedAliases = true;
+}
+
 let specVersion: SpecVersion;
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
+    await setAliases();
     if (!specVersion) {
         specVersion = await SpecVersion.get(block.specVersion.toString());
     }

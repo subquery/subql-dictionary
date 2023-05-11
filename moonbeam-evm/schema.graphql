@@ -1,3 +1,8 @@
+type ChainAliases @entity {
+  id: ID!
+  value: String!
+}
+
 type SpecVersion @entity {
 
   id: ID! #specVersion
