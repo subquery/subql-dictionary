@@ -75,10 +75,10 @@ function handleEvmEvent(blockNumber: string, eventIdx: number, event: EventRecor
         id: `${blockNumber}-${eventIdx}`,
         address: address.toString(),
         blockHeight: BigInt(blockNumber),
-        topics0: topics[0].toHex(),
-        topics1: topics[1]?.toHex(),
-        topics2: topics[2]?.toHex(),
-        topics3: topics[3]?.toHex(),
+        topics0: topics[0]?.toHex().toLowerCase(),
+        topics1: topics[1]?.toHex().toLowerCase(),
+        topics2: topics[2]?.toHex().toLowerCase(),
+        topics3: topics[3]?.toHex().toLowerCase(),
     });
 }
 
@@ -87,12 +87,12 @@ export function handleEvmTransaction(idx: string, transaction: [FrontierEvmCall]
     if (!tx.hash) {
         return;
     }
-    const func = isZero(tx.data) ? undefined : inputToFunctionSighash(tx.data);
+    const func = isZero(tx.data) ? undefined : inputToFunctionSighash(tx.data).toLowerCase();
     return EvmTransaction.create({
         id: idx,
         txHash: tx.hash,
-        from: tx.from,
-        to: tx.to,
+        from: tx.from.toLowerCase(),
+        to: tx.to.toLowerCase(),
         func,
         blockHeight: BigInt(tx.blockNumber.toString()),
         success: tx.success,

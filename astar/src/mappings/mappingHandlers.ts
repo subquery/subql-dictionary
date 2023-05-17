@@ -120,10 +120,10 @@ function handleEvmEvent(event: SubstrateEvent): EvmLogModel {
   const evmLog = new EvmLogModel(`${event.block.block.header.number.toString()}-${event.idx}`)
   evmLog.address = address.toString()
   evmLog.blockHeight= event.block.block.header.number.toBigInt();
-  evmLog.topics0= topics[0].toHex();
-  evmLog.topics1= topics[1]?.toHex();
-  evmLog.topics2= topics[2]?.toHex();
-  evmLog.topics3= topics[3]?.toHex();
+  evmLog.topics0= topics[0].toHex().toLowerCase();
+  evmLog.topics1= topics[1]?.toHex().toLowerCase();
+  evmLog.topics2= topics[2]?.toHex().toLowerCase();
+  evmLog.topics3= topics[3]?.toHex().toLowerCase();
   return evmLog
 }
 
@@ -131,7 +131,7 @@ export function handleEvmTransaction(idx: string, tx: FrontierEvmCall): EvmTrans
   if (!tx.hash) {
     return;
   }
-  const func = isZero(tx.data) ? undefined : inputToFunctionSighash(tx.data);
+  const func = isZero(tx.data) ? undefined : inputToFunctionSighash(tx.data).toLowerCase();
   const evmTransaction = new EvmTransaction(`${tx.blockNumber.toString()}-${idx}`)
   evmTransaction.txHash = tx.hash;
   evmTransaction.from = tx.from;

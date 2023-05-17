@@ -22,7 +22,7 @@ type Extrinsic @entity {
 
 type EvmTransaction @entity {
   id: ID!
-  txHash: String! @index
+  txHash: String!
   from: String! @index
   to: String! @index
   func: String @index
@@ -34,7 +34,7 @@ type EvmLog @entity {
   id: ID!
   address: String! @index
   blockHeight: BigInt! @index
-  topics0: String!
+  topics0: String! @index
   topics1: String
   topics2: String
   topics3: String
