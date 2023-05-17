@@ -22,7 +22,7 @@ network:
 
 # Understanding the dictionary
 
-Visit [How the dictionary works](https://doc.subquery.network/tutorials_examples/howto.html#how-does-a-subquery-dictionary-work) for more information.
+Visit [How the dictionary works](https://academy.subquery.network/academy/tutorials_examples/dictionary.html#how-does-a-subquery-dictionary-work) for more information.
 
 # Adding your own dictionary
 
