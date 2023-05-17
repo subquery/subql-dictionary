@@ -87,21 +87,23 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
 }
 
 export function handleEvent(event: SubstrateEvent): Event {
-  const newEvent = new Event(`${event.block.block.header.number.toString()}-${event.idx}`);
-  newEvent.blockHeight = event.block.block.header.number.toBigInt();
-  newEvent.module = event.event.section;
-  newEvent.event = event.event.method;
-  return newEvent;
+  return Event.create({
+    id: `${event.block.block.header.number.toString()}-${event.idx}`,
+    blockHeight: event.block.block.header.number.toBigInt(),
+    module: event.event.section,
+    event: event.event.method,
+  });
 }
 
 export function handleCall(extrinsic: SubstrateExtrinsic): Extrinsic {
-  const newExtrinsic = new Extrinsic(`${extrinsic.block.block.header.number.toString()}-${extrinsic.idx.toString()}`);
-  newExtrinsic.module = extrinsic.extrinsic.method.section;
-  newExtrinsic.call = extrinsic.extrinsic.method.method;
-  newExtrinsic.blockHeight = extrinsic.block.block.header.number.toBigInt();
-  newExtrinsic.success = extrinsic.success;
-  newExtrinsic.isSigned = extrinsic.extrinsic.isSigned;
-  return newExtrinsic;
+  return Extrinsic.create({
+    id: `${extrinsic.block.block.header.number.toString()}-${extrinsic.idx.toString()}`,
+    module: extrinsic.extrinsic.method.section,
+    call: extrinsic.extrinsic.method.method,
+    blockHeight: extrinsic.block.block.header.number.toBigInt(),
+    success: extrinsic.success,
+    isSigned: extrinsic.extrinsic.isSigned,
+  });
 }
 
 function handleEvmEvent(event: SubstrateEvent): EvmLogModel {
@@ -117,14 +119,15 @@ function handleEvmEvent(event: SubstrateEvent): EvmLogModel {
     address = (log as {log: EvmLog}).log.address;
     topics = (log as {log: EvmLog}).log.topics;
   }
-  const evmLog = new EvmLogModel(`${event.block.block.header.number.toString()}-${event.idx}`)
-  evmLog.address = address.toString()
-  evmLog.blockHeight= event.block.block.header.number.toBigInt();
-  evmLog.topics0= topics[0].toHex().toLowerCase();
-  evmLog.topics1= topics[1]?.toHex().toLowerCase();
-  evmLog.topics2= topics[2]?.toHex().toLowerCase();
-  evmLog.topics3= topics[3]?.toHex().toLowerCase();
-  return evmLog
+  return EvmLogModel.create({
+    id: `${event.block.block.header.number.toString()}-${event.idx}`,
+    address: address.toString(),
+    blockHeight:event.block.block.header.number.toBigInt(),
+    topics0:topics[0].toHex().toLowerCase(),
+    topics1:topics[1]?.toHex().toLowerCase(),
+    topics2:topics[2]?.toHex().toLowerCase(),
+    topics3:topics[3]?.toHex().toLowerCase(),
+  });
 }
 
 export function handleEvmTransaction(idx: string, tx: FrontierEvmCall): EvmTransaction {
@@ -132,16 +135,16 @@ export function handleEvmTransaction(idx: string, tx: FrontierEvmCall): EvmTrans
     return;
   }
   const func = isZero(tx.data) ? undefined : inputToFunctionSighash(tx.data).toLowerCase();
-  const evmTransaction = new EvmTransaction(`${tx.blockNumber.toString()}-${idx}`)
-  evmTransaction.txHash = tx.hash;
-  evmTransaction.from = tx.from;
-  evmTransaction.to= tx.to;
-  evmTransaction.func = func;
-  evmTransaction.blockHeight = BigInt(tx.blockNumber.toString());
-  evmTransaction.success = tx.success;
-  return evmTransaction
+  return EvmTransaction.create({
+    id: `${tx.blockNumber.toString()}-${idx}`,
+    txHash: tx.hash,
+    from: tx.from.toLowerCase(),
+    to:tx.to.toLowerCase(),
+    func: func,
+    blockHeight: BigInt(tx.blockNumber.toString()),
+    success: tx.success,
+  });
 }
-
 
 export function handleContractCalls(call:  SubstrateExtrinsic): ContractsCall {
   const [dest,,,, data] = call.extrinsic.method.args;

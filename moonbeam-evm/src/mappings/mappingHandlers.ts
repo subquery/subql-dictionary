@@ -37,10 +37,12 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
 }
 
 export function handleEvent(blockNumber: string, eventIdx: number, event: EventRecord): [Event, EvmLogModel] {
-    const newEvent = new Event(`${blockNumber}-${eventIdx}`);
-    newEvent.blockHeight = BigInt(blockNumber);
-    newEvent.module = event.event.section;
-    newEvent.event = event.event.method;
+    const newEvent = Event.create({
+        id: `${blockNumber}-${eventIdx}`,
+        blockHeight: BigInt(blockNumber),
+        module: event.event.section,
+        event: event.event.method,
+    });
     const ret: [Event, EvmLogModel] = [newEvent, undefined];
     if (event.event.section === 'evm' && event.event.method === 'Log') {
         ret[1] = handleEvmEvent(blockNumber, eventIdx, event);
@@ -49,13 +51,14 @@ export function handleEvent(blockNumber: string, eventIdx: number, event: EventR
 }
 
 export function handleCall(idx: string, extrinsic: SubstrateExtrinsic): Extrinsic {
-    const newExtrinsic = new Extrinsic(idx);
-    newExtrinsic.module = extrinsic.extrinsic.method.section;
-    newExtrinsic.call = extrinsic.extrinsic.method.method;
-    newExtrinsic.blockHeight = extrinsic.block.block.header.number.toBigInt();
-    newExtrinsic.success = extrinsic.success;
-    newExtrinsic.isSigned = extrinsic.extrinsic.isSigned;
-    return newExtrinsic;
+    return Extrinsic.create({
+        id: idx,
+        module: extrinsic.extrinsic.method.section,
+        call: extrinsic.extrinsic.method.method,
+        blockHeight: extrinsic.block.block.header.number.toBigInt(),
+        success: extrinsic.success,
+        isSigned: extrinsic.extrinsic.isSigned,
+    });
 }
 
 function handleEvmEvent(blockNumber: string, eventIdx: number, event: EventRecord): EvmLogModel {
