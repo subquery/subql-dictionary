@@ -69,22 +69,24 @@ function handleEvent(
   eventIdx: number,
   event: EventRecord
 ): Event {
-  const newEvent = new Event(`${blockNumber}-${eventIdx}`);
-  newEvent.blockHeight = BigInt(blockNumber);
-  newEvent.module = event.event.section;
-  newEvent.event = event.event.method;
-  return newEvent;
+  return Event.create({
+    id: `${blockNumber}-${eventIdx}`,
+    blockHeight: BigInt(blockNumber),
+    module: event.event.section,
+    event: event.event.method,
+  });
 }
 
 function handleCall(idx: string, extrinsic: SubstrateExtrinsic): Extrinsic {
-  const newExtrinsic = new Extrinsic(idx);
-  newExtrinsic.txHash = extrinsic.extrinsic.hash.toString();
-  newExtrinsic.module = extrinsic.extrinsic.method.section;
-  newExtrinsic.call = extrinsic.extrinsic.method.method;
-  newExtrinsic.blockHeight = extrinsic.block.block.header.number.toBigInt();
-  newExtrinsic.success = extrinsic.success;
-  newExtrinsic.isSigned = extrinsic.extrinsic.isSigned;
-  return newExtrinsic;
+  return Extrinsic.create({
+    id: idx,
+    txHash: extrinsic.extrinsic.hash.toString(),
+    module: extrinsic.extrinsic.method.section,
+    call: extrinsic.extrinsic.method.method,
+    blockHeight: extrinsic.block.block.header.number.toBigInt(),
+    success: extrinsic.success,
+    isSigned: extrinsic.extrinsic.isSigned,
+  });
 }
 
 function wrapExtrinsics(wrappedBlock: SubstrateBlock): SubstrateExtrinsic[] {
@@ -128,10 +130,10 @@ async function handleEvmLog(blockNumber: string, event: SubstrateEvent): Promise
     id: `${blockNumber}-${event.idx}-${evt.logIndex}`,
     address: evt.address,
     blockHeight: BigInt(blockNumber),
-    topics0: evt.topics[0],
-    topics1: evt.topics[1],
-    topics2: evt.topics[2],
-    topics3: evt.topics[3],
+    topics0: evt.topics[0].toLowerCase(),
+    topics1: evt.topics[1]?.toLowerCase(),
+    topics2: evt.topics[2]?.toLowerCase(),
+    topics3: evt.topics[3]?.toLowerCase(),
   }));
 }
 
@@ -147,7 +149,7 @@ async function handleEvmTransaction(idx: number, tx: SubstrateExtrinsic): Promis
     txHash: call.hash,
     from: call.from,
     to: call.to,
-    func: isZero(call.data) ? undefined : inputToFunctionSighash(call.data),
+    func: isZero(call.data) ? undefined : inputToFunctionSighash(call.data).toLowerCase(),
     blockHeight: BigInt(call.blockNumber),
     success: tx.success,
   }));

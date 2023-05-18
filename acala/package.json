@@ -31,7 +31,8 @@
     "chaintypes": "src/chaintypes.ts"
   },
   "dependencies": {
-    "@subql/acala-evm-processor": "^0.0.2",
+    "@subql/acala-evm-processor": "^0.1.3",
+    "abab": "^2.0.6",
     "lodash": "^4.17.21"
   },
   "resolutions": {
