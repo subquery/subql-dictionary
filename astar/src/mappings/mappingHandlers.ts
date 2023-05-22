@@ -25,8 +25,11 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
     specVersion = await SpecVersion.get(block.specVersion.toString());
   }
   if(!specVersion || specVersion.id !== block.specVersion.toString()){
-    specVersion = new SpecVersion(block.specVersion.toString());
-    specVersion.blockHeight = block.block.header.number.toBigInt();
+    specVersion = SpecVersion.create({
+      id: block.specVersion.toString(),
+      blockHeight: block.block.header.number.toBigInt(),
+    });
+
     await specVersion.save();
   }
   const wrappedCalls = wrapExtrinsics(block);
@@ -148,28 +151,26 @@ export function handleEvmTransaction(idx: string, tx: FrontierEvmCall): EvmTrans
 
 export function handleContractCalls(call:  SubstrateExtrinsic): ContractsCall {
   const [dest,,,, data] = call.extrinsic.method.args;
-  const contractCall = new ContractsCall(`${call.block.block.header.number.toString()}-${call.idx}`)
-  contractCall.from = call.extrinsic.isSigned? call.extrinsic.signer.toString(): undefined;
-  contractCall.success = !call.events.find(
-      (evt) => evt.event.section === 'system' && evt.event.method === 'ExtrinsicFailed'
-  );
-  contractCall.dest = (dest as Address).toString();
-  contractCall.blockHeight = call.block.block.header.number.toBigInt();
-  contractCall.selector = getSelector(data.toU8a())
-  return contractCall;
-
+  return ContractsCall.create({
+    id: `${call.block.block.header.number.toString()}-${call.idx}`,
+    from: call.extrinsic.isSigned? call.extrinsic.signer.toString(): undefined,
+    success: !call.events.find(
+        (evt) => evt.event.section === 'system' && evt.event.method === 'ExtrinsicFailed'
+    ),
+    dest: (dest as Address).toString(),
+    blockHeight: call.block.block.header.number.toBigInt(),
+    selector: getSelector(data.toU8a()),
+  });
 }
 
 export function handleContractsEmitted(event: SubstrateEvent):ContractEmitted{
   const [contract, data] = event.event.data as unknown as ContractEmittedResult;
 
-  const contractEmitted = ContractEmitted.create({
+  return ContractEmitted.create({
     id: `${event.block.block.header.number.toString()}-${event.idx}`,
     blockHeight:  event.block.block.header.number.toBigInt(),
     contract: contract.toString(),
     from: event.extrinsic.extrinsic.isSigned? event.extrinsic.extrinsic.signer.toString(): EMPTY_ADDRESS,
     eventIndex: data[0],
   });
-
-  return contractEmitted;
 }

@@ -14,8 +14,10 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
 
   // Check for updates to Spec Version
   if (!specVersion || specVersion.id !== block.specVersion.toString()) {
-    specVersion = new SpecVersion(block.specVersion.toString());
-    specVersion.blockHeight = block.block.header.number.toBigInt();
+    specVersion = SpecVersion.create({
+      id: block.specVersion.toString(),
+      blockHeight: block.block.header.number.toBigInt(),
+    });
     await specVersion.save();
   }
 
