@@ -29,5 +29,8 @@
     "@subql/types": "latest",
     "abab": "latest",
     "typescript": "^4.4.4"
+  },
+  "exports": {
+    "chaintypes": "src/chaintypes.ts"
   }
 }
