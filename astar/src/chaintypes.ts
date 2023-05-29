@@ -7,7 +7,7 @@ const definitions: OverrideBundleDefinition = {
   types: [
     {
       // TODO awaiting an error at a future spec version to figure out the end range
-      minmax: [13, undefined],
+      minmax: [3, undefined],
       types: {
         DispatchErrorModule: {
             index: 'u8',
