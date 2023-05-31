@@ -51,6 +51,7 @@ export function handleEvent(blockNumber: string, eventIdx: number, event: EventR
 }
 
 export function handleCall(idx: string, extrinsic: SubstrateExtrinsic): Extrinsic {
+    logger.info(`INDEX ${idx}`)
     return Extrinsic.create({
         id: idx,
         module: extrinsic.extrinsic.method.section,
@@ -95,7 +96,7 @@ export function handleEvmTransaction(idx: string, transaction: [FrontierEvmCall]
         id: idx,
         txHash: tx.hash,
         from: tx.from.toLowerCase(),
-        to: tx.to.toLowerCase(),
+        to: tx.to?.toLowerCase(),
         func,
         blockHeight: BigInt(tx.blockNumber.toString()),
         success: tx.success,
