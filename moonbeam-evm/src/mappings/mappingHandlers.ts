@@ -11,8 +11,10 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
     }
 
     if(!specVersion || specVersion.id !== block.specVersion.toString()){
-        specVersion = new SpecVersion(block.specVersion.toString());
-        specVersion.blockHeight = block.block.header.number.toBigInt();
+        specVersion = SpecVersion.create({
+            id: block.specVersion.toString(),
+            blockHeight: block.block.header.number.toBigInt(),
+        });
         await specVersion.save();
     }
     const eventData = block.events.filter(evt => evt.event.section!=='system' && evt.event.method!=='ExtrinsicSuccess').map((evt, idx)=>handleEvent(block.block.header.number.toString(), idx, evt));
