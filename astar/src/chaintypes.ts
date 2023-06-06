@@ -6,13 +6,41 @@ import type { OverrideBundleDefinition } from '@polkadot/types/types';
 const definitions: OverrideBundleDefinition = {
   types: [
     {
-      // TODO awaiting an error at a future spec version to figure out the end range
-      minmax: [3, undefined],
+      // on all versions
+      minmax: [0, undefined],
       types: {
-        DispatchErrorModule: {
-            index: 'u8',
-            error: 'u8',
+        Keys: 'AccountId',
+        Address: 'MultiAddress',
+        LookupSource: 'MultiAddress',
+        AmountOf: 'Amount',
+        Amount: 'i128',
+        SmartContract: {
+          _enum: {
+            Evm: 'H160',
+            Wasm: 'AccountId'
+          }
         },
+        EraStakingPoints: {
+          total: 'Balance',
+          stakers: 'BTreeMap<AccountId, Balance>',
+          formerStakedEra: 'EraIndex',
+          claimedRewards: 'Balance'
+        },
+        PalletDappsStakingEraStakingPoints: {
+          total: 'Balance',
+          stakers: 'BTreeMap<AccountId, Balance>',
+          formerStakedEra: 'EraIndex',
+          claimedRewards: 'Balance'
+        },
+        EraRewardAndStake: {
+          rewards: 'Balance',
+          staked: 'Balance'
+        },
+        PalletDappsStakingEraRewardAndStake: {
+          rewards: 'Balance',
+          staked: 'Balance'
+        },
+        EraIndex: 'u32'
       }
     }
   ]
