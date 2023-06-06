@@ -40,10 +40,15 @@ const definitions: OverrideBundleDefinition = {
           rewards: 'Balance',
           staked: 'Balance'
         },
-        EraIndex: 'u32'
+        EraIndex: 'u32',
+        // TODO awaiting an error at a future spec version to figure out the end range [3,undefined]
+        DispatchErrorModule: {
+          index: 'u8',
+          error: 'u8',
+        },
       }
     }
   ]
-};
+}
 
 export default { typesBundle: { spec: { "shiden": definitions }}};
