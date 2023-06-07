@@ -1,3 +1,4 @@
+import assert from 'assert';
 import {Bytes} from '@polkadot/types';
 const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000';
 import {TransactionV2, EthTransaction ,AccountId, Address, EvmLog} from "@polkadot/types/interfaces"
@@ -16,7 +17,7 @@ import {inputToFunctionSighash, isZero, getSelector, wrapExtrinsics, wrapEvents}
 import {ApiPromise} from "@polkadot/api";
 
 
-let specVersion: SpecVersion;
+let specVersion: SpecVersion | undefined;
 
 export type ContractEmittedResult = [AccountId, Bytes]
 
@@ -38,9 +39,9 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
           !(evt.event.section === "system" &&
               evt.event.method === "ExtrinsicSuccess")
   ),block)
-  let events=[]
-  let contractEmittedEvents=[];
-  let evmLogs=[];
+  let events: Event[] =[]
+  let contractEmittedEvents: ContractEmitted[] =[];
+  let evmLogs: EvmLogModel[] =[];
   wrappedEvents.filter(evt => evt.event.section!=='system' && evt.event.method!=='ExtrinsicSuccess').map(event=>{
     events.push(handleEvent(event))
     if (event.event.section === 'contracts' && (event.event.method === 'ContractEmitted' || event.event.method === 'ContractExecution')) {
@@ -51,11 +52,11 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
     }
   })
 
-  let calls=[]
-  let contractCalls=[];
-  let evmTransactions=[];
+  let calls: Extrinsic[] =[]
+  let contractCalls: ContractsCall[] =[];
+  let evmTransactions: EvmTransaction[] =[];
 
-  wrappedCalls.map(async call => {
+  await Promise.all(wrappedCalls.map(async call => {
     calls.push(handleCall(call))
     if (call.extrinsic.method.section === 'contracts' && call.extrinsic.method.method === 'call') {
       contractCalls.push(handleContractCalls(call));
@@ -70,10 +71,12 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
         })
         evmTransactions.push(handleEvmTransaction(call.idx.toString(),frontierEvmCall))
       }
-    } catch {
+    } catch (e) {
+      logger.warn(e, 'Failed to transform ethereum transaction, skipping');
       // Failed evm transaction skipped
     }
-  })
+  }));
+
   // seems there is a concurrent limitation for promise.all and bulkCreate work together,
   // the last entity upsertion are missed
   // We will put them into two promise for now.
@@ -113,7 +116,7 @@ function handleEvmEvent(event: SubstrateEvent): EvmLogModel {
   let address;
   // let data;
   let topics;
-  const [log] = event.event.data as unknown as [{log:EvmLog} | EvmLog]
+  const [log] = event.event.data as unknown as [{log:EvmLog} | EvmLog];
 
   if((log as EvmLog).address){
     address = (log as EvmLog).address
@@ -134,8 +137,8 @@ function handleEvmEvent(event: SubstrateEvent): EvmLogModel {
 }
 
 export function handleEvmTransaction(idx: string, tx: FrontierEvmCall): EvmTransaction {
-  if (!tx.hash) {
-    return;
+  if (!tx.hash || !tx.blockNumber) {
+    throw new Error('Invalid evm transaction');
   }
   const func = isZero(tx.data) ? undefined : inputToFunctionSighash(tx.data).toLowerCase();
   return EvmTransaction.create({
@@ -151,9 +154,11 @@ export function handleEvmTransaction(idx: string, tx: FrontierEvmCall): EvmTrans
 
 export function handleContractCalls(call:  SubstrateExtrinsic): ContractsCall {
   const [dest,,,, data] = call.extrinsic.method.args;
+  assert(call.extrinsic.isSigned, "Contract calls must be signed");
+
   return ContractsCall.create({
     id: `${call.block.block.header.number.toString()}-${call.idx}`,
-    from: call.extrinsic.isSigned? call.extrinsic.signer.toString(): undefined,
+    from: call.extrinsic.signer.toString(),
     success: !call.events.find(
         (evt) => evt.event.section === 'system' && evt.event.method === 'ExtrinsicFailed'
     ),
@@ -170,7 +175,7 @@ export function handleContractsEmitted(event: SubstrateEvent):ContractEmitted{
     id: `${event.block.block.header.number.toString()}-${event.idx}`,
     blockHeight:  event.block.block.header.number.toBigInt(),
     contract: contract.toString(),
-    from: event.extrinsic.extrinsic.isSigned? event.extrinsic.extrinsic.signer.toString(): EMPTY_ADDRESS,
+    from: event.extrinsic?.extrinsic.isSigned ? event.extrinsic.extrinsic.signer.toString(): EMPTY_ADDRESS,
     eventIndex: data[0],
   });
 }
