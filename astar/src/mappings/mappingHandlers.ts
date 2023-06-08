@@ -145,6 +145,7 @@ export function handleEvmTransaction(idx: string, tx: FrontierEvmCall): EvmTrans
     id: `${tx.blockNumber.toString()}-${idx}`,
     txHash: tx.hash,
     from: tx.from.toLowerCase(),
+    // @ts-ignore
     to: tx.to?.toLowerCase(),
     func: func,
     blockHeight: BigInt(tx.blockNumber.toString()),

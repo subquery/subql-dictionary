@@ -45,7 +45,13 @@ const definitions: OverrideBundleDefinition = {
         DispatchErrorModule: {
           index: 'u8',
           error: 'u8',
-        },
+        }
+      }
+    },
+    {
+      minmax: [14, undefined],
+      types: {
+        EthTransaction: 'LegacyTransaction',
       }
     }
   ]
