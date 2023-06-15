@@ -124,7 +124,7 @@ async function handleEvmLog(blockNumber: string, event: SubstrateEvent): Promise
 
   const evmLogs = await acalaProcessor.handlerProcessors['substrate/AcalaEvmEvent'].transformer({
     input: event,
-    ds: null,
+    ds: {} as any,
     api: api as any,
   });
 
@@ -142,7 +142,7 @@ async function handleEvmLog(blockNumber: string, event: SubstrateEvent): Promise
 async function handleEvmTransaction(idx: number, tx: SubstrateExtrinsic): Promise<EvmTransaction[]> {
   const calls = await acalaProcessor.handlerProcessors['substrate/AcalaEvmCall'].transformer({
     input: tx,
-    ds: null,
+    ds: {} as any,
     api: api as any,
   });
 
