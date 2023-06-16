@@ -12,7 +12,6 @@ type Event @entity {
 
 type Extrinsic @entity {
   id: ID!
-  txHash: String!
   module: String! @index
   call: String! @index
   blockHeight: BigInt! @index
