@@ -51,7 +51,6 @@ query {
   extrinsics(first: 10, filter: {blockHeight : {equalTo:"50253705"}}) {
     nodes {
       id,
-      txHash,
       module,
       call,
       blockHeight,
