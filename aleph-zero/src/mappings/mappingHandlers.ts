@@ -2,7 +2,7 @@ import { EventRecord } from "@polkadot/types/interfaces";
 import { SubstrateExtrinsic, SubstrateBlock } from "@subql/types";
 import { SpecVersion, Event, Extrinsic } from "../types";
 
-let specVersion: SpecVersion;
+let specVersion: SpecVersion | undefined;
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
   // Initialise Spec Version
   if (!specVersion) {
@@ -11,7 +11,10 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
 
   // Check for updates to Spec Version
   if (!specVersion || specVersion.id !== block.specVersion.toString()) {
-    specVersion = new SpecVersion(block.specVersion.toString(), block.block.header.number.toBigInt());
+    specVersion = SpecVersion.create({
+      id: block.specVersion.toString(),
+      blockHeight: block.block.header.number.toBigInt(),
+    });
     await specVersion.save();
   }
 
@@ -19,8 +22,10 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
   const events = block.events
     .filter(
       (evt) =>
-        !(evt.event.section === "system" &&
-        evt.event.method === "ExtrinsicSuccess")
+        !(
+          evt.event.section === "system" &&
+          evt.event.method === "ExtrinsicSuccess"
+        )
     )
     .map((evt, idx) =>
       handleEvent(block.block.header.number.toString(), idx, evt)
@@ -54,7 +59,6 @@ function handleEvent(
 function handleCall(idx: string, extrinsic: SubstrateExtrinsic): Extrinsic {
   return Extrinsic.create({
     id: idx,
-    txHash: extrinsic.extrinsic.hash.toString(),
     module: extrinsic.extrinsic.method.section,
     call: extrinsic.extrinsic.method.method,
     blockHeight: extrinsic.block.block.header.number.toBigInt(),
