@@ -33,7 +33,7 @@ Event:
 
 ```
 query {
-  events(first: 10, filter: {blockHeight : {equalTo:"50253705"}}) {
+  events(first: 10, filter: {blockHeight : {equalTo:"4515186"}}) {
     nodes {
       id,
       module,
@@ -48,7 +48,7 @@ Extrinsic:
 
 ```
 query {
-  extrinsics(first: 10, filter: {blockHeight : {equalTo:"50253705"}}) {
+  extrinsics(first: 10, filter: {blockHeight : {equalTo:"4515186"}}) {
     nodes {
       id,
       module,

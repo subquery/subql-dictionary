@@ -23,7 +23,11 @@
     "@polkadot/api": "10.1.4",
     "@subql/cli": "latest",
     "@subql/types": "latest",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "@zeitgeistpm/type-defs": "^0.8.0"
+  },
+  "exports": {
+    "zeitgeistChaintypes": "./chainTypes/zeitgeistChaintypes.ts"
   },
   "resolutions": {
     "ipfs-unixfs": "6.0.6"
