@@ -14,8 +14,10 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
 
   // Check for updates to Spec Version
   if (!specVersion || specVersion.id !== block.specVersion.toString()) {
-    specVersion = new SpecVersion(block.specVersion.toString());
-    specVersion.blockHeight = block.block.header.number.toBigInt();
+    specVersion = SpecVersion.create({
+      id: block.specVersion.toString(),
+      blockHeight: block.block.header.number.toBigInt(),
+    });
     await specVersion.save();
   }
 
@@ -122,7 +124,7 @@ async function handleEvmLog(blockNumber: string, event: SubstrateEvent): Promise
 
   const evmLogs = await acalaProcessor.handlerProcessors['substrate/AcalaEvmEvent'].transformer({
     input: event,
-    ds: null,
+    ds: {} as any,
     api: api as any,
   });
 
@@ -140,7 +142,7 @@ async function handleEvmLog(blockNumber: string, event: SubstrateEvent): Promise
 async function handleEvmTransaction(idx: number, tx: SubstrateExtrinsic): Promise<EvmTransaction[]> {
   const calls = await acalaProcessor.handlerProcessors['substrate/AcalaEvmCall'].transformer({
     input: tx,
-    ds: null,
+    ds: {} as any,
     api: api as any,
   });
 

@@ -11,8 +11,7 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
 
   // Check for updates to Spec Version
   if (!specVersion || specVersion.id !== block.specVersion.toString()) {
-    specVersion = new SpecVersion(block.specVersion.toString());
-    specVersion.blockHeight = block.block.header.number.toBigInt();
+    specVersion = new SpecVersion(block.specVersion.toString(),block.block.header.number.toBigInt());
     await specVersion.save();
   }
 
@@ -44,21 +43,20 @@ function handleEvent(
   eventIdx: number,
   event: EventRecord
 ): Event {
-  const newEvent = new Event(`${blockNumber}-${eventIdx}`);
-  newEvent.blockHeight = BigInt(blockNumber);
-  newEvent.module = event.event.section;
-  newEvent.event = event.event.method;
+  const newEvent = new Event(`${blockNumber}-${eventIdx}`,event.event.section,event.event.method,BigInt(blockNumber));
   return newEvent;
 }
 
 function handleCall(idx: string, extrinsic: SubstrateExtrinsic): Extrinsic {
-  const newExtrinsic = new Extrinsic(idx);
-  newExtrinsic.txHash = extrinsic.extrinsic.hash.toString();
-  newExtrinsic.module = extrinsic.extrinsic.method.section;
-  newExtrinsic.call = extrinsic.extrinsic.method.method;
-  newExtrinsic.blockHeight = extrinsic.block.block.header.number.toBigInt();
-  newExtrinsic.success = extrinsic.success;
-  newExtrinsic.isSigned = extrinsic.extrinsic.isSigned;
+  const newExtrinsic = new Extrinsic(
+      idx,
+      extrinsic.extrinsic.hash.toString(),
+      extrinsic.extrinsic.method.section,
+      extrinsic.extrinsic.method.method,
+      extrinsic.block.block.header.number.toBigInt(),
+      extrinsic.success,
+      extrinsic.extrinsic.isSigned
+  );
   return newExtrinsic;
 }
 

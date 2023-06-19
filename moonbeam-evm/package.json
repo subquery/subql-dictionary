@@ -8,7 +8,8 @@
     "prepack": "rm -rf dist && npm build",
     "test": "jest",
     "codegen": "subql codegen",
-    "start:docker": "docker-compose pull && docker-compose up --remove-orphans"
+    "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
+    "test": "subql build && subql-node test"
   },
   "homepage": "https://github.com/subquery/moonbeam-dictionary",
   "repository": "github:subquery/moonbeam-dictionary",
@@ -28,7 +29,8 @@
   "devDependencies": {
     "@polkadot/api": "^9",
     "@subql/cli": "latest",
-    "@subql/frontier-evm-processor": "^0.1.3",
+    "@subql/frontier-evm-processor": "^0.1.4",
+    "@subql/testing": "^2.0.1",
     "@subql/types": "latest",
     "abab": "latest",
     "moonbeam-types-bundle": "^2.0.7",
