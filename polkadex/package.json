@@ -27,5 +27,8 @@
   },
   "resolutions": {
     "ipfs-unixfs": "6.0.6"
+  },
+  "exports": {
+    "chaintypes": "src/chaintypes.ts"
   }
 }
