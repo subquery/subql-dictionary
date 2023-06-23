@@ -26,3 +26,50 @@ yarn build
 ```shell
 yarn start:docker
 ```
+
+### 4. Queries
+
+Event:
+
+```
+query {
+  events(first: 10, filter: {blockHeight : {equalTo:"3185132"}}) {
+    nodes {
+      id,
+      module,
+      event,
+      blockHeight
+    }
+  }
+}
+```
+
+Extrinsic:
+
+```
+query {
+  extrinsics(first: 10, filter: {blockHeight : {equalTo:"3185132"}}) {
+    nodes {
+      id,
+      module,
+      call,
+      blockHeight,
+      success,
+      isSigned,
+    }
+  }
+}
+```
+
+SpecVersion:
+
+```
+query {
+  specVersions(first: 10) {
+    nodes {
+      id,
+      blockHeight
+    }
+  }
+}
+```

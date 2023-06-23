@@ -8,8 +8,9 @@
     "resolveJsonModule": true,
     "module": "commonjs",
     "outDir": "dist",
-    "rootDir": "src",
-    "target": "es2017"
+    "rootDir": ".",
+    "target": "es2017",
+    "strict": true
   },
   "include": [
     "src/**/*",
