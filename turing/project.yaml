@@ -1,0 +1,27 @@
+specVersion: 1.0.0
+name: SubQuery Dictionary - Turing
+version: 1.0.0
+runner:
+  node:
+    name: '@subql/node'
+    version: '*'
+  query:
+    name: '@subql/query'
+    version: '*'
+description: >-
+  A SubQuery Dictionary Project that provides increased indexing speed to all
+  projects
+repository: 'https://github.com/subquery/subql-dictionary'
+schema:
+  file: ./schema.graphql
+network:
+  chainId: '0x0f62b701fb12d02237a33b84818c11f621653d2b1614c777973babf4652b535d'
+  endpoint: 'wss://turing-rpc.dwellir.com'
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler
