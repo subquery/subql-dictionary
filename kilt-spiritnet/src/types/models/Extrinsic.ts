@@ -78,6 +78,20 @@ export class Extrinsic implements Entity {
     }
 
 
+    static async getByModule(module: string): Promise<Extrinsic[] | undefined>{
+      
+      const records = await store.getByField('Extrinsic', 'module', module);
+      return records.map(record => this.create(record as ExtrinsicProps));
+      
+    }
+
+    static async getByCall(call: string): Promise<Extrinsic[] | undefined>{
+      
+      const records = await store.getByField('Extrinsic', 'call', call);
+      return records.map(record => this.create(record as ExtrinsicProps));
+      
+    }
+
     static async getByBlockHeight(blockHeight: bigint): Promise<Extrinsic[] | undefined>{
       
       const records = await store.getByField('Extrinsic', 'blockHeight', blockHeight);

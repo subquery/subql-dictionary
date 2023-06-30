@@ -66,6 +66,20 @@ export class Event implements Entity {
     }
 
 
+    static async getByModule(module: string): Promise<Event[] | undefined>{
+      
+      const records = await store.getByField('Event', 'module', module);
+      return records.map(record => this.create(record as EventProps));
+      
+    }
+
+    static async getByEvent(event: string): Promise<Event[] | undefined>{
+      
+      const records = await store.getByField('Event', 'event', event);
+      return records.map(record => this.create(record as EventProps));
+      
+    }
+
     static async getByBlockHeight(blockHeight: bigint): Promise<Event[] | undefined>{
       
       const records = await store.getByField('Event', 'blockHeight', blockHeight);
