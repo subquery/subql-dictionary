@@ -80,6 +80,7 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
   // seems there is a concurrent limitation for promise.all and bulkCreate work together,
   // the last entity upsertion are missed
   // We will put them into two promise for now.
+  // All save order should always follow this structure
   for (const event of events) {
     await event.save()
   }

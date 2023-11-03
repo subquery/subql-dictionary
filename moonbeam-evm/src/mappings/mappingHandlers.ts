@@ -28,6 +28,8 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
         api: undefined}
     ))) as [FrontierEvmCall][];
 
+    // Save all data
+    // All save order should always follow this structure
     for (const event of events) {
         await event.save()
     }

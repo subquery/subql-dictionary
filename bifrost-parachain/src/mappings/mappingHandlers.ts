@@ -35,6 +35,7 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
   );
 
   // Save all data
+  // All save order should always follow this structure
   for (const event of events) {
     await event.save()
   }
