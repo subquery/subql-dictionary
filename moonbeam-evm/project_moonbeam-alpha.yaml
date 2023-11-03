@@ -5,6 +5,10 @@ runner:
   node:
     name: '@subql/node'
     version: '*'
+    options:
+      unfinalizedBlocks: false
+      historical: false
+
   query:
     name: '@subql/query'
     version: '*'
