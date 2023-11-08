@@ -34,11 +34,13 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
     handleCall(`${block.block.header.number.toString()}-${idx}`, ext)
   );
 
-  // Save all data
-  await Promise.all([
-    store.bulkCreate("Event", events),
-    store.bulkCreate("Extrinsic", calls),
-  ]);
+  // All save order should always follow this structure
+  for (const event of events) {
+    await event.save()
+  }
+  for (const call of calls) {
+    await call.save()
+  }
 }
 
 function handleEvent(
