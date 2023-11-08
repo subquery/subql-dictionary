@@ -20,7 +20,7 @@
   "author": "SubQuery Network",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@bifrost-finance/type-definitions": "latest",
+    "@bifrost-finance/type-definitions": "1.11.3",
     "@polkadot/api": "^10.9.1",
     "@subql/cli": "latest",
     "@subql/types": "latest",
