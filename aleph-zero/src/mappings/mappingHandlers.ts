@@ -20,27 +20,30 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
 
   // Process all events in block
   const events = block.events
-    .filter(
-      (evt) =>
-        !(
-          evt.event.section === "system" &&
-          evt.event.method === "ExtrinsicSuccess"
-        )
-    )
-    .map((evt, idx) =>
-      handleEvent(block.block.header.number.toString(), idx, evt)
-    );
+      .filter(
+          (evt) =>
+              !(
+                  evt.event.section === "system" &&
+                  evt.event.method === "ExtrinsicSuccess"
+              )
+      )
+      .map((evt, idx) =>
+          handleEvent(block.block.header.number.toString(), idx, evt)
+      );
 
   // Process all calls in block
   const calls = wrapExtrinsics(block).map((ext, idx) =>
-    handleCall(`${block.block.header.number.toString()}-${idx}`, ext)
+      handleCall(`${block.block.header.number.toString()}-${idx}`, ext)
   );
 
   // Save all data
-  await Promise.all([
-    store.bulkCreate("Event", events),
-    store.bulkCreate("Extrinsic", calls),
-  ]);
+  // All save order should always follow this structure
+  for (const event of events) {
+    await event.save()
+  }
+  for (const call of calls) {
+    await call.save()
+  }
 }
 
 function handleEvent(

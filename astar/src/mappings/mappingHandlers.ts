@@ -80,16 +80,25 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
   // seems there is a concurrent limitation for promise.all and bulkCreate work together,
   // the last entity upsertion are missed
   // We will put them into two promise for now.
-  await Promise.all([
-    store.bulkCreate('Event', events),
-    store.bulkCreate('ContractEmitted', contractEmittedEvents),
-    store.bulkCreate('EvmLog', evmLogs),
-  ]);
-  await Promise.all([
-    store.bulkCreate('Extrinsic', calls),
-    store.bulkCreate('ContractsCall', contractCalls),
-    store.bulkCreate('EvmTransaction', evmTransactions)
-  ]);
+  // All save order should always follow this structure
+  for (const event of events) {
+    await event.save()
+  }
+  for (const call of calls) {
+    await call.save()
+  }
+  for (const evmLog of evmLogs) {
+    await evmLog.save()
+  }
+  for (const evmTransaction of evmTransactions) {
+    await evmTransaction.save()
+  }
+  for (const contractEmittedEvent of contractEmittedEvents) {
+    await contractEmittedEvent.save()
+  }
+  for (const contractCall of contractCalls) {
+    await contractCall.save()
+  }
 }
 
 export function handleEvent(event: SubstrateEvent): Event {

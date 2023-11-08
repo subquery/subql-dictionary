@@ -27,15 +27,22 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
         filter: undefined,
         api: undefined}
     ))) as [FrontierEvmCall][];
-    await Promise.all([
-        store.bulkCreate('Event', events),
-        store.bulkCreate('EvmLog', logs),
-        store.bulkCreate('Extrinsic', calls),
-        store.bulkCreate('EvmTransaction', evmCalls
-            .map((call,idx)=>handleEvmTransaction(`${block.block.header.number.toString()}-${idx}`,call))
-            .filter(tx=>tx)
-        ),
-    ]);
+
+    // Save all data
+    // All save order should always follow this structure
+    for (const event of events) {
+        await event.save()
+    }
+    for (const call of calls) {
+        await call.save()
+    }
+    for (const log of logs) {
+        await log.save()
+    }
+    for (const evmCall of evmCalls.map((call,idx)=>handleEvmTransaction(`${block.block.header.number.toString()}-${idx}`,call))
+        .filter(tx=>tx)) {
+        await evmCall.save()
+    }
 }
 
 export function handleEvent(blockNumber: string, eventIdx: number, event: EventRecord): [Event, EvmLogModel] {
