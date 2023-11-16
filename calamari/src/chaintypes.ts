@@ -18,7 +18,8 @@ const definitions: OverrideBundleDefinition = {
         CurrencyIdOf: 'CurrencyId',
         Amount: 'i128',
         AmountOf: 'Amount',
-        AccountInfo: 'AccountInfoWithDualRefCount'
+        AccountInfo: 'AccountInfoWithDualRefCount',
+        DispatchErrorModule: 'DispatchErrorModuleU8'
       }
     }
   ]
