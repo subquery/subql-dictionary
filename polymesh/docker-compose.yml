@@ -27,6 +27,7 @@ services:
       - ./:/app
     command:
       - -f=/app
+      - --db-schema=public
       - --disable-historical=true
 
   graphql-engine:
@@ -43,5 +44,5 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
     command:
-      - --name=app
+      - --name=public
       - --playground
