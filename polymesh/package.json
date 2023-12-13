@@ -1,7 +1,7 @@
 {
   "name": "subql-dictionary",
   "version": "1.0.0",
-  "description": "A SubQuery Dictionary Project that provides increased indexing speed to all projects",
+  "description": "A SubQuery Dictionary Project that provides increased indexing speed to all projects indexing Polymesh Chains",
   "main": "dist/index.js",
   "scripts": {
     "build": "subql build",
@@ -17,7 +17,7 @@
     "schema.graphql",
     "project.yaml"
   ],
-  "author": "SubQuery Network",
+  "author": "Polymesh Association",
   "license": "Apache-2.0",
   "devDependencies": {
     "@polkadot/api": "^10",

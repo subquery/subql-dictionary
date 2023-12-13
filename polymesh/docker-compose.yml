@@ -46,3 +46,7 @@ services:
     command:
       - --name=public
       - --playground
+      - --indexer=http://subquery-node:3000
+
+volumes:
+  .data:

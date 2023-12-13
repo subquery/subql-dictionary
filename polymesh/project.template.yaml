@@ -1,5 +1,5 @@
 specVersion: 1.0.0
-name: SubQuery Dictionary - Polkadot
+name: SubQuery Dictionary - Polymesh
 version: 1.0.0
 runner:
   node:
@@ -10,8 +10,8 @@ runner:
     version: '*'
 description: >-
   A SubQuery Dictionary Project that provides increased indexing speed to all
-  projects
-repository: 'https://github.com/subquery/subql-dictionary'
+  projects indexing Polymesh Chains
+repository: 'https://github.com/PolymeshAssociation/subql-dictionary'
 schema:
   file: ./schema.graphql
 network:
