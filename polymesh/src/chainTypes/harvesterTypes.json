@@ -1,0 +1,101 @@
+{
+  "HexBytes": "Bytes",
+  "ProposalData": {
+    "_enum": {
+      "Hash": "Hash",
+      "Proposal": "HexBytes"
+    }
+  },
+  "Committee": {
+    "_enum": {
+      "Technical": "",
+      "Upgrade": "()"
+    }
+  },
+  "SnapshotResult": {
+    "_enum": {
+      "Approve": "",
+      "Reject": "()",
+      "Skip": ""
+    }
+  },
+  "CompactAssignments": "CompactAssignmentsWith16",
+  "FundraiserStatus": {
+    "_enum": {
+      "Live": "()",
+      "Frozen": "",
+      "Closed": "",
+      "ClosedEarly": ""
+    }
+  },
+  "IdentificationTuple": {
+    "validatorId": "ValidatorId",
+    "exposure": "FullIdentification"
+  },
+  "TaskAddress": {
+    "blockNumber": "BlockNumber",
+    "index": "u32"
+  },
+  "SessionKeys4": {
+    "grandpa": "AccountId",
+    "babe": "AccountId",
+    "im_online": "AccountId",
+    "authority_discovery": "AccountId"
+  },
+  "SessionKeys": {
+    "grandpa": "AccountId",
+    "babe": "AccountId",
+    "im_online": "AccountId",
+    "authority_discovery": "AccountId"
+  },
+  "SessionKeysSubstrate": {
+    "grandpa": "AccountId",
+    "babe": "AccountId",
+    "im_online": "AccountId",
+    "authority_discovery": "AccountId"
+  },
+  "Keys": {
+    "grandpa": "AccountId",
+    "babe": "AccountId",
+    "im_online": "AccountId",
+    "authority_discovery": "AccountId"
+  },
+  "SessionKeysPolkadot": {
+    "grandpa": "AccountId",
+    "babe": "AccountId",
+    "im_online": "AccountId",
+    "authority_discovery": "AccountId"
+  },
+  "ClaimType": {
+    "_enum": {
+      "Accredited": "()",
+      "Affiliate": "",
+      "BuyLockup": "",
+      "SellLockup": "",
+      "CustomerDueDiligence": "",
+      "KnowYourCustomer": "",
+      "Jurisdiction": "",
+      "Exempted": "",
+      "Blocked": "",
+      "InvestorUniqueness": "",
+      "NoData": "",
+      "InvestorUniquenessV2": ""
+    }
+  },
+  "EventCounts": "Vec<u32>",
+  "ErrorAt": "(u32, DispatchError)",
+  "OffchainAccuracy": "u16",
+  "CompactScoreCompact": {
+    "validatorIndex": "ValidatorIndexCompact",
+    "offchainAccuracy": "Compact<OffchainAccuracy>"
+  },
+  "NextAuthority": {
+    "AuthorityId": "AccountId",
+    "weight": "u64"
+  },
+  "AuthorityList": "Vec<NextAuthority>",
+  "ElectionCompute": {
+    "_enum": ["OnChain", "Signed", "Authority"]
+  },
+  "DispatchErrorModule": "DispatchErrorModuleU8"
+}

@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:12-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - .data/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgres
+
+  subquery-node:
+    image: onfinality/subql-node:latest
+    depends_on:
+      - 'postgres'
+    restart: always
+    environment:
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_DATABASE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      NETWORK_ENDPOINT: wss://testnet-rpc.polymesh.live
+      NETWORK_CHAIN_ID: '0x2ace05e703aa50b48c0ccccfc8b424f7aab9a1e2c424ed12e45d20b1e8ffd0d6'
+    volumes:
+      - ./:/app
+    command:
+      - -f=/app
+      - --db-schema=public
+      - --disable-historical=true
+
+  graphql-engine:
+    image: onfinality/subql-query:latest
+    ports:
+      - 3000:3000
+    depends_on:
+      - 'postgres'
+    restart: always
+    environment:
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_DATABASE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+    command:
+      - --name=public
+      - --playground
+      - --indexer=http://subquery-node:3000
+
+volumes:
+  .data:

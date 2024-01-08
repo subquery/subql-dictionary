@@ -1,0 +1,29 @@
+specVersion: 1.0.0
+name: SubQuery Dictionary - Polymesh
+version: 1.0.0
+runner:
+  node:
+    name: '@subql/node'
+    version: '*'
+  query:
+    name: '@subql/query'
+    version: '*'
+description: >-
+  A SubQuery Dictionary Project that provides increased indexing speed to all
+  projects indexing Polymesh Chains
+repository: 'https://github.com/PolymeshAssociation/subql-dictionary'
+schema:
+  file: ./schema.graphql
+network:
+  chainId: '${NETWORK_CHAIN_ID}'
+  endpoint: '${NETWORK_ENDPOINT}'
+  chaintypes:
+    file: ./dist/chainTypes.js
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler
