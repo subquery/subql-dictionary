@@ -58,12 +58,20 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
   );
 
   // Save all data
-  await Promise.all([
-    store.bulkCreate("Event", events),
-    store.bulkCreate("Extrinsic", calls),
-    store.bulkCreate("EvmLog", evmLogs.flat()),
-    store.bulkCreate("EvmTransaction", evmTransactions.flat()),
-  ]);
+  // All save order should always follow this structure
+  for (const event of events) {
+    await event.save()
+  }
+  for (const call of calls) {
+    await call.save()
+  }
+
+  for (const evmLog of evmLogs.flat()) {
+    await evmLog.save()
+  }
+  for (const evmTransaction of evmTransactions.flat()) {
+    await evmTransaction.save()
+  }
 }
 
 function handleEvent(
