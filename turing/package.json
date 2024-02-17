@@ -1,5 +1,5 @@
 {
-  "name": "subql-dictionary",
+  "name": "turing-dictionary",
   "version": "1.0.0",
   "description": "A SubQuery Dictionary Project that provides increased indexing speed to all projects",
   "main": "dist/index.js",
@@ -8,6 +8,7 @@
     "prepack": "rm -rf dist && npm build",
     "test": "jest",
     "codegen": "./node_modules/.bin/subql codegen",
+    "publish:all": "bash scripts/publish-manifest.sh",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans"
   },
   "homepage": "https://github.com/subquery/subql-dictionary",

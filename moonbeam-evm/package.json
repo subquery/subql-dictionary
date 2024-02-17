@@ -1,15 +1,14 @@
 {
-  "name": "moonbeam-dictionary",
+  "name": "moonbeam-evm-dictionary",
   "version": "0.1.0",
   "description": "subquery diction for moonbase-alpha and moonriver",
   "main": "dist/index.js",
   "scripts": {
     "build": "subql build",
     "prepack": "rm -rf dist && npm build",
-    "test": "jest",
+    "test": "subql build && subql-node test",
     "codegen": "subql codegen",
-    "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
-    "test": "subql build && subql-node test"
+    "start:docker": "docker-compose pull && docker-compose up --remove-orphans"
   },
   "homepage": "https://github.com/subquery/moonbeam-dictionary",
   "repository": "github:subquery/moonbeam-dictionary",
