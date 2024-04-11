@@ -21,12 +21,18 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
     const events = eventData.map(([evt])=>evt);
     const logs = eventData.map(([_,log])=>log).filter(log=>log);
     const calls = wrapExtrinsics(block).map((ext,idx)=>handleCall(`${block.block.header.number.toString()}-${idx}`,ext));
-    const evmCalls = await Promise.all(wrapExtrinsics(block).filter(ext => ext.extrinsic.method.section === 'ethereum' && ext.extrinsic.method.method === 'transact').map( (ext) => FrontierEvmDatasourcePlugin.handlerProcessors['substrate/FrontierEvmCall'].transformer({
-        input: ext as SubstrateExtrinsic<[TransactionV2 | EthTransaction]>,
-        ds:{} as any,
-        filter: undefined,
-        api: undefined}
-    ))) as [FrontierEvmCall][];
+
+    const evmCalls: [FrontierEvmCall][] = []
+
+    for (const ext of wrapExtrinsics(block).filter(ext => ext.extrinsic.method.section === 'ethereum' && ext.extrinsic.method.method === 'transact')) {
+        const result = await FrontierEvmDatasourcePlugin.handlerProcessors['substrate/FrontierEvmCall'].transformer({
+            input: ext as SubstrateExtrinsic<[TransactionV2 | EthTransaction]>,
+            ds: {} as any,
+            filter: undefined,
+            api: undefined
+        });
+        evmCalls.push(result  as [FrontierEvmCall]);
+    }
 
     // Save all data
     // All save order should always follow this structure

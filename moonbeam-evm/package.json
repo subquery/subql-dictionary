@@ -8,6 +8,7 @@
     "prepack": "rm -rf dist && npm build",
     "test": "subql build && subql-node test",
     "codegen": "subql codegen",
+    "publish:all": "bash scripts/publish-manifest.sh",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans"
   },
   "homepage": "https://github.com/subquery/moonbeam-dictionary",
