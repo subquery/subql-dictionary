@@ -3,8 +3,9 @@ import {SubstrateExtrinsic,SubstrateBlock} from "@subql/types";
 import { SpecVersion, Event, Extrinsic, EvmLog as EvmLogModel, EvmTransaction } from "../types";
 import FrontierEvmDatasourcePlugin, { FrontierEvmCall } from "@subql/frontier-evm-processor/";
 import { inputToFunctionSighash, isZero, wrapExtrinsics } from "../utils";
+import assert from "assert";
 
-let specVersion: SpecVersion;
+let specVersion: SpecVersion | undefined;
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
     if (!specVersion) {
         specVersion = await SpecVersion.get(block.specVersion.toString());
@@ -29,7 +30,7 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
             input: ext as SubstrateExtrinsic<[TransactionV2 | EthTransaction]>,
             ds: {} as any,
             filter: undefined,
-            api: undefined
+            api: undefined as any
         });
         evmCalls.push(result  as [FrontierEvmCall]);
     }
@@ -46,8 +47,8 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
         await log.save()
     }
     for (const evmCall of evmCalls.map((call,idx)=>handleEvmTransaction(`${block.block.header.number.toString()}-${idx}`,call))
-        .filter(tx=>tx)) {
-        await evmCall.save()
+        .filter(tx=> tx)) {
+        await (evmCall as EvmTransaction).save()
     }
 }
 
@@ -58,7 +59,7 @@ export function handleEvent(blockNumber: string, eventIdx: number, event: EventR
         module: event.event.section,
         event: event.event.method,
     });
-    const ret: [Event, EvmLogModel] = [newEvent, undefined];
+    const ret: [Event, EvmLogModel] = [newEvent, undefined as any];
     if (event.event.section === 'evm' && event.event.method === 'Log') {
         ret[1] = handleEvmEvent(blockNumber, eventIdx, event);
     }
@@ -100,11 +101,12 @@ function handleEvmEvent(blockNumber: string, eventIdx: number, event: EventRecor
     });
 }
 
-export function handleEvmTransaction(idx: string, transaction: [FrontierEvmCall]): EvmTransaction {
+export function handleEvmTransaction(idx: string, transaction: [FrontierEvmCall]): EvmTransaction | undefined{
     const [tx] = transaction
     if (!tx.hash) {
         return;
     }
+    assert(tx.blockNumber, 'Missing blockNumber')
     const func = isZero(tx.data) ? undefined : inputToFunctionSighash(tx.data).toLowerCase();
     return EvmTransaction.create({
         id: idx,
