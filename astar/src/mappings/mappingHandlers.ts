@@ -56,8 +56,9 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
   let contractCalls: ContractsCall[] =[];
   let evmTransactions: EvmTransaction[] =[];
 
-  await Promise.all(wrappedCalls.map(async call => {
-    calls.push(handleCall(call))
+  for (const call of wrappedCalls) {
+    calls.push(handleCall(call));
+
     if (call.extrinsic.method.section === 'contracts' && call.extrinsic.method.method === 'call') {
       contractCalls.push(handleContractCalls(call));
     }
@@ -68,14 +69,14 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
           ds: {} as any,
           filter: undefined,
           api: api as ApiPromise
-        })
-        evmTransactions.push(handleEvmTransaction(call.idx.toString(),frontierEvmCall))
+        });
+        evmTransactions.push(handleEvmTransaction(call.idx.toString(), frontierEvmCall));
       }
     } catch (e) {
       logger.warn(e, 'Failed to transform ethereum transaction, skipping');
       // Failed evm transaction skipped
     }
-  }));
+  }
 
   // seems there is a concurrent limitation for promise.all and bulkCreate work together,
   // the last entity upsertion are missed

@@ -33,10 +33,12 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
   );
 
   // Save all data
-  await Promise.all([
-    store.bulkCreate("Event", events),
-    store.bulkCreate("Extrinsic", calls),
-  ]);
+  for (const event of events) {
+    await event.save()
+  }
+  for (const call of calls) {
+    await call.save()
+  }
 }
 
 function handleEvent(

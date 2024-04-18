@@ -35,35 +35,45 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
       handleEvent(block.block.header.number.toString(), idx, evt)
     );
 
-  const evmLogs = await Promise.all(
-    wrappedEvents
-      .filter(evt => {
-        const baseFilter = acalaProcessor.handlerProcessors['substrate/AcalaEvmEvent'].baseFilter[0];
-        return evt.event.section === baseFilter.module && evt.event.method === baseFilter.method;
-      })
-      .map(evt => handleEvmLog(block.block.header.number.toString(), evt))
-  );
+  const evmLogs: EvmLog[][] = []
+  for (const evt of wrappedEvents.filter(evt => {
+    const baseFilter = acalaProcessor.handlerProcessors['substrate/AcalaEvmEvent'].baseFilter[0];
+    return evt.event.section === baseFilter.module && evt.event.method === baseFilter.method;
+  })) {
+    const logResult = await handleEvmLog(block.block.header.number.toString(), evt);
+    evmLogs.push(logResult);
+  }
 
   // Process all calls in block
   const calls = wrappedExtrinsics.map((ext, idx) =>
     handleCall(`${block.block.header.number.toString()}-${idx}`, ext)
   );
 
-  const evmTransactions = await Promise.all(wrappedExtrinsics
-    .filter(ex => {
-      const baseFilter = acalaProcessor.handlerProcessors['substrate/AcalaEvmCall'].baseFilter[0];
-      return ex.extrinsic.method.section === baseFilter.module && ex.extrinsic.method.method === baseFilter.method && ex.success;
-    })
-    .map(ex => handleEvmTransaction(ex.idx, ex))
-  );
+  const evmTransactions: EvmTransaction[][] = [];
+
+  for (const ex of wrappedExtrinsics.filter(ex => {
+    const baseFilter = acalaProcessor.handlerProcessors['substrate/AcalaEvmCall'].baseFilter[0];
+    return ex.extrinsic.method.section === baseFilter.module && ex.extrinsic.method.method === baseFilter.method && ex.success;
+  })) {
+    const transactionResult = await handleEvmTransaction(ex.idx, ex);
+    evmTransactions.push(transactionResult);
+  }
 
   // Save all data
-  await Promise.all([
-    store.bulkCreate("Event", events),
-    store.bulkCreate("Extrinsic", calls),
-    store.bulkCreate("EvmLog", evmLogs.flat()),
-    store.bulkCreate("EvmTransaction", evmTransactions.flat()),
-  ]);
+  // All save order should always follow this structure
+  for (const event of events) {
+    await event.save()
+  }
+  for (const call of calls) {
+    await call.save()
+  }
+
+  for (const evmLog of evmLogs.flat()) {
+    await evmLog.save()
+  }
+  for (const evmTransaction of evmTransactions.flat()) {
+    await evmTransaction.save()
+  }
 }
 
 function handleEvent(
