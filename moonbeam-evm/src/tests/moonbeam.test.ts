@@ -17,7 +17,7 @@ subqlTest(
     EvmTransaction.create({
       id: `${blockNumber}-${5}`,
       from: '0x16f615a38528764eea9c6388a8c4e1fc8305cbb3',
-      to: null,
+      to: undefined,
       blockHeight: BigInt(blockNumber),
       func:'0x600d805',
       success: true,
