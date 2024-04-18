@@ -2,7 +2,7 @@ import { EventRecord } from "@polkadot/types/interfaces";
 import { SubstrateExtrinsic, SubstrateBlock } from "@subql/types";
 import { SpecVersion, Event, Extrinsic } from "../types";
 
-let specVersion: SpecVersion;
+let specVersion: SpecVersion | undefined;
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
   // Initialise Spec Version
   if (!specVersion) {

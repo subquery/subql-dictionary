@@ -1,11 +1,12 @@
 import { EventRecord } from "@polkadot/types/interfaces";
-import { SubstrateExtrinsic, SubstrateBlock, SubstrateEvent } from "@subql/types";
+import {SubstrateExtrinsic, SubstrateBlock, SubstrateEvent, SubstrateEventFilter} from "@subql/types";
 import { SpecVersion, Event, Extrinsic, EvmLog, EvmTransaction } from "../types";
 import acalaProcessor from '@subql/acala-evm-processor';
 import {hexDataSlice, stripZeros} from '@ethersproject/bytes';
 import { merge } from 'lodash';
+import assert from "assert";
 
-let specVersion: SpecVersion;
+let specVersion: SpecVersion | undefined;
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
   // Initialise Spec Version
   if (!specVersion) {
@@ -37,7 +38,7 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
 
   const evmLogs: EvmLog[][] = []
   for (const evt of wrappedEvents.filter(evt => {
-    const baseFilter = acalaProcessor.handlerProcessors['substrate/AcalaEvmEvent'].baseFilter[0];
+    const baseFilter = (acalaProcessor as any).handlerProcessors['substrate/AcalaEvmEvent'].baseFilter[0] as any as SubstrateEventFilter;
     return evt.event.section === baseFilter.module && evt.event.method === baseFilter.method;
   })) {
     const logResult = await handleEvmLog(block.block.header.number.toString(), evt);
@@ -52,7 +53,7 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
   const evmTransactions: EvmTransaction[][] = [];
 
   for (const ex of wrappedExtrinsics.filter(ex => {
-    const baseFilter = acalaProcessor.handlerProcessors['substrate/AcalaEvmCall'].baseFilter[0];
+    const baseFilter = (acalaProcessor as any).handlerProcessors['substrate/AcalaEvmCall'].baseFilter[0];
     return ex.extrinsic.method.section === baseFilter.module && ex.extrinsic.method.method === baseFilter.method && ex.success;
   })) {
     const transactionResult = await handleEvmTransaction(ex.idx, ex);
@@ -156,15 +157,18 @@ async function handleEvmTransaction(idx: number, tx: SubstrateExtrinsic): Promis
     api: api as any,
   });
 
-  return calls.map((call, i) => EvmTransaction.create({
-    id: `${call.blockNumber}-${idx}-${i}`,
-    txHash: call.hash,
-    from: call.from,
-    to: call.to,
-    func: isZero(call.data) ? undefined : inputToFunctionSighash(call.data).toLowerCase(),
-    blockHeight: BigInt(call.blockNumber),
-    success: tx.success,
-  }));
+  return calls.map((call, i) => {
+    assert(call.blockNumber, 'No blockNumber in call')
+    return EvmTransaction.create({
+      id: `${call.blockNumber}-${idx}-${i}`,
+      txHash: call.hash,
+      from: call.from,
+      to: call.to,
+      func: isZero(call.data) ? undefined : inputToFunctionSighash(call.data).toLowerCase(),
+      blockHeight: BigInt(call.blockNumber),
+      success: tx.success,
+    })
+  });
 }
 
 export function inputToFunctionSighash(input: string): string {
