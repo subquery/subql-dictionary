@@ -5,19 +5,13 @@ import acalaProcessor from '@subql/acala-evm-processor';
 import {hexDataSlice, stripZeros} from '@ethersproject/bytes';
 import { merge } from 'lodash';
 
-let specVersion: SpecVersion;
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
   // Initialise Spec Version
-  if (!specVersion) {
-    specVersion = await SpecVersion.get(block.specVersion.toString());
-  }
+  let specVersion = await SpecVersion.get(block.specVersion.toString());
 
   // Check for updates to Spec Version
-  if (!specVersion || specVersion.id !== block.specVersion.toString()) {
-    specVersion = SpecVersion.create({
-      id: block.specVersion.toString(),
-      blockHeight: block.block.header.number.toBigInt(),
-    });
+  if (!specVersion) {
+    specVersion = new SpecVersion(block.specVersion.toString(),block.block.header.number.toBigInt());
     await specVersion.save();
   }
 

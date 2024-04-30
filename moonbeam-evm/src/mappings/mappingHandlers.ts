@@ -4,13 +4,11 @@ import { SpecVersion, Event, Extrinsic, EvmLog as EvmLogModel, EvmTransaction } 
 import FrontierEvmDatasourcePlugin, { FrontierEvmCall } from "@subql/frontier-evm-processor/";
 import { inputToFunctionSighash, isZero, wrapExtrinsics } from "../utils";
 
-let specVersion: SpecVersion;
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
-    if (!specVersion) {
-        specVersion = await SpecVersion.get(block.specVersion.toString());
-    }
 
-    if(!specVersion || specVersion.id !== block.specVersion.toString()){
+    let specVersion = await SpecVersion.get(block.specVersion.toString());
+
+    if(!specVersion){
         specVersion = SpecVersion.create({
             id: block.specVersion.toString(),
             blockHeight: block.block.header.number.toBigInt(),

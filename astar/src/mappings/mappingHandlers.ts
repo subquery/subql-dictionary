@@ -16,21 +16,15 @@ import FrontierEvmDatasourcePlugin, { FrontierEvmCall } from "@subql/frontier-ev
 import {inputToFunctionSighash, isZero, getSelector, wrapExtrinsics, wrapEvents} from "../utils";
 import {ApiPromise} from "@polkadot/api";
 
-
-let specVersion: SpecVersion | undefined;
-
 export type ContractEmittedResult = [AccountId, Bytes]
 
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
-  if (!specVersion) {
-    specVersion = await SpecVersion.get(block.specVersion.toString());
-  }
-  if(!specVersion || specVersion.id !== block.specVersion.toString()){
+  let specVersion = await SpecVersion.get(block.specVersion.toString());
+  if(!specVersion){
     specVersion = SpecVersion.create({
       id: block.specVersion.toString(),
       blockHeight: block.block.header.number.toBigInt(),
     });
-
     await specVersion.save();
   }
   const wrappedCalls = wrapExtrinsics(block);
