@@ -2,15 +2,12 @@ import { EventRecord } from "@polkadot/types/interfaces";
 import { SubstrateExtrinsic, SubstrateBlock } from "@subql/types";
 import { SpecVersion, Event, Extrinsic } from "../types";
 
-let specVersion: SpecVersion;
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
   // Initialise Spec Version
-  if (!specVersion) {
-    specVersion = await SpecVersion.get(block.specVersion.toString());
-  }
+  let specVersion = await SpecVersion.get(block.specVersion.toString());
 
   // Check for updates to Spec Version
-  if (!specVersion || specVersion.id !== block.specVersion.toString()) {
+  if (!specVersion) {
     specVersion = new SpecVersion(block.specVersion.toString(),block.block.header.number.toBigInt());
     await specVersion.save();
   }
