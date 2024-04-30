@@ -14,6 +14,9 @@ done
 
 cd "$FILE" || exit
 
+# Parse the endpoint from the YAML file
+ENDPOINT=$(yq e '.network.endpoint' "$ROOTPATH/$FILE/$YAML")
+
 if [ "$YAML" != undefined ]
   then
     IPFSCID=$(npx subql publish -o -f"$ROOTPATH/$FILE/$YAML")
@@ -21,6 +24,4 @@ if [ "$YAML" != undefined ]
     IPFSCID=$(npx subql publish -o -f "$ROOTPATH/$FILE")
 fi
 
-IPFSCID=$(npx subql publish -o -f "$ROOTPATH/$FILE")
-
-npx subql deployment:deploy -d --ipfsCID="$IPFSCID" --projectName="${PROJECTNAME}" --org="${ORG%/*}"
+npx subql deployment:deploy -d --ipfsCID="$IPFSCID" --projectName="${PROJECTNAME}" --org="${ORG%/*}" --endpoint="${ENDPOINT}"
