@@ -21,7 +21,7 @@
   "author": "SubQuery Network",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@acala-network/type-definitions": "latest",
+    "@acala-network/types": "^6.1.1",
     "@polkadot/api": "10.1.4",
     "@subql/cli": "latest",
     "@subql/testing": "^2.0.1",
