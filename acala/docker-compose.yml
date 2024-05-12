@@ -3,6 +3,7 @@ version: '3'
 services:
   postgres:
     image: postgres:12-alpine
+    container_name: db
     ports:
       - 5432:5432
     volumes:
@@ -24,8 +25,9 @@ services:
     volumes:
       - ./:/app
     command:
-      - -f=/app
+      - -f=/app/project-karura.yaml
       - --disable-historical=true
+      - --batch-size=1
 
   graphql-engine:
     image: onfinality/subql-query:latest
