@@ -23,9 +23,9 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@acala-network/types": "^6.1.2",
-    "@polkadot/api": "10.1.4",
+    "@polkadot/api": "^11",
     "@subql/cli": "latest",
-    "@subql/testing": "^2.0.1",
+    "@subql/testing": "latest",
     "@subql/types": "latest",
     "typescript": "^4.1.3"
   },
