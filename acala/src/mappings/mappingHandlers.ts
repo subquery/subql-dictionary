@@ -2,7 +2,7 @@ import { EventRecord } from "@polkadot/types/interfaces";
 import { SubstrateExtrinsic, SubstrateBlock, SubstrateEvent } from "@subql/types";
 import { SpecVersion, Event, Extrinsic, EvmLog, EvmTransaction } from "../types";
 import acalaProcessor from '@subql/acala-evm-processor';
-import {hexDataSlice, stripZeros} from '@ethersproject/bytes';
+import { hexDataSlice, stripZeros } from '@ethersproject/bytes';
 import { merge } from 'lodash';
 
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
@@ -23,7 +23,7 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
     .filter(
       (evt) =>
         !(evt.event.section === "system" &&
-        evt.event.method === "ExtrinsicSuccess")
+          evt.event.method === "ExtrinsicSuccess")
     )
     .map((evt, idx) =>
       handleEvent(block.block.header.number.toString(), idx, evt)
@@ -96,10 +96,15 @@ function handleCall(idx: string, extrinsic: SubstrateExtrinsic): Extrinsic {
 }
 
 function wrapExtrinsics(wrappedBlock: SubstrateBlock): SubstrateExtrinsic[] {
+  const groupedEvents = wrappedBlock.events.reduce((acc, evt) => {
+    if (evt.phase.isApplyExtrinsic) {
+      acc[evt.phase.asApplyExtrinsic.toNumber()] ??= [];
+      acc[evt.phase.asApplyExtrinsic.toNumber()].push(evt);
+    }
+    return acc;
+  }, {} as Record<number, EventRecord[]>)
   return wrappedBlock.block.extrinsics.map((extrinsic, idx) => {
-    const events = wrappedBlock.events.filter(
-      ({ phase }) => phase.isApplyExtrinsic && phase.asApplyExtrinsic.eqn(idx)
-    );
+    const events = groupedEvents[idx];
     return {
       idx,
       extrinsic,
@@ -162,10 +167,10 @@ async function handleEvmTransaction(idx: number, tx: SubstrateExtrinsic): Promis
 }
 
 export function inputToFunctionSighash(input: string): string {
-    return hexDataSlice(input, 0, 4);
+  return hexDataSlice(input, 0, 4);
 }
 
 export function isZero(input: string): boolean {
-    return stripZeros(input).length === 0;
+  return stripZeros(input).length === 0;
 }
 
