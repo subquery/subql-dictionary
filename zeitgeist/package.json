@@ -21,11 +21,12 @@
   "author": "SubQuery Network",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@polkadot/api": "10.1.4",
+    "@polkadot/api": "^13",
     "@subql/cli": "latest",
+    "@subql/common-substrate": "^4.3.4",
     "@subql/types": "latest",
-    "typescript": "^5.0.4",
-    "@zeitgeistpm/type-defs": "^0.8.0"
+    "@zeitgeistpm/type-defs": "^0.8.0",
+    "typescript": "^5.0.4"
   },
   "exports": {
     "zeitgeistChaintypes": "./chainTypes/zeitgeistChaintypes.ts"

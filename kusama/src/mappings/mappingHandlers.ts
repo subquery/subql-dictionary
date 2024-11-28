@@ -1,5 +1,5 @@
-import { EventRecord } from "@polkadot/types/interfaces";
-import { SubstrateBlock, SubstrateExtrinsic } from "@subql/types";
+import type { EventRecord } from "@polkadot/types/interfaces";
+import type { SubstrateBlock, SubstrateExtrinsic } from "@subql/types";
 import { Event, Extrinsic, SpecVersion } from "../types";
 
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
