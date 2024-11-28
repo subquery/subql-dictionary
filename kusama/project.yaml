@@ -28,3 +28,6 @@ dataSources:
       handlers:
         - handler: handleBlock
           kind: substrate/BlockHandler
+parent:
+  reference: "Qmbe5g5vbEJYYAfpjcwNDzuhjeyaEQPQbxKyKx6PveYnR8"
+  untilBlock: 25845980
