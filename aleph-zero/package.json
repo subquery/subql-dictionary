@@ -21,8 +21,9 @@
   "author": "SubQuery Network",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@polkadot/api": "10.1.4",
+    "@polkadot/api": "^13",
     "@subql/cli": "latest",
+    "@subql/common-substrate": "^4.3.4",
     "@subql/types": "latest",
     "typescript": "^5.0.4"
   },
