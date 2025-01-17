@@ -1,0 +1,30 @@
+specVersion: 1.0.0
+name: SubQuery Dictionary - Phala
+version: 1.0.0
+runner:
+  node:
+    name: '@subql/node'
+    version: '>=3.0.0'
+    options:
+      unfinalizedBlocks: false
+      historical: false
+  query:
+    name: '@subql/query'
+    version: '*'
+description: >-
+  A SubQuery Dictionary Project that provides increased indexing speed to all
+  projects
+repository: 'https://github.com/subquery/subql-dictionary'
+schema:
+  file: ./schema.graphql
+network:
+  chainId: "0x1bb969d85965e4bb5a651abbedf21a54b6b31a21f66b5401cc3f1e286268d736"
+  endpoint: wss://api.phala.network/ws
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler
