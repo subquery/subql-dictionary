@@ -22,8 +22,9 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@bifrost-finance/type-definitions": "1.11.3",
-    "@polkadot/api": "^10.9.1",
+    "@polkadot/api": "^13",
     "@subql/cli": "latest",
+    "@subql/common-substrate": "^4.3.4",
     "@subql/types": "latest",
     "typescript": "^5.1.6"
   },

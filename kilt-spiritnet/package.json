@@ -21,11 +21,12 @@
   "author": "SubQuery Network",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@polkadot/api": "10.1.4",
+    "@kiltprotocol/type-definitions": "0.33.1",
+    "@polkadot/api": "^13",
     "@subql/cli": "latest",
+    "@subql/common-substrate": "^4.3.4",
     "@subql/types": "latest",
-    "typescript": "^5.0.4",
-    "@kiltprotocol/type-definitions": "0.33.1"
+    "typescript": "^5.0.4"
   },
   "resolutions": {
     "ipfs-unixfs": "6.0.6"

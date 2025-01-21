@@ -3,23 +3,23 @@ name: SubQuery Dictionary - Westend
 version: 1.0.0
 runner:
   node:
-    name: '@subql/node'
-    version: '>=3.0.0'
+    name: "@subql/node"
+    version: ">=3.0.0"
     options:
       unfinalizedBlocks: false
       historical: false
   query:
-    name: '@subql/query'
-    version: '*'
+    name: "@subql/query"
+    version: "*"
 description: >-
   A SubQuery Dictionary Project that provides increased indexing speed to all
   projects
-repository: 'https://github.com/subquery/subql-dictionary'
+repository: "https://github.com/subquery/subql-dictionary"
 schema:
   file: ./schema.graphql
 network:
-  chainId: '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e'
-  endpoint: 'wss://westend.api.onfinality.io/public-ws'
+  chainId: "0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e"
+  endpoint: "wss://westend.api.onfinality.io/public-ws"
 dataSources:
   - kind: substrate/Runtime
     startBlock: 1
@@ -28,3 +28,6 @@ dataSources:
       handlers:
         - handler: handleBlock
           kind: substrate/BlockHandler
+parent:
+  reference: "QmP1BMJoyJ5iFq6XLSfTJ3D23iWuTG1tnsEffJpNieQnwN"
+  untilBlock: 23641138
