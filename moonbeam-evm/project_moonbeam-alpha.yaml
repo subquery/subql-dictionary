@@ -23,6 +23,9 @@ network:
   endpoint: 'wss://moonbeam-alpha.api.onfinality.io/public-ws'
   chaintypes:
     file: ./dist/chaintypes.js
+parent:
+  reference: QmWv9Ja5AQ9cPpXb6U7sGCvkhK6XbZ7xQntTBqidsSf5SF
+  untilBlock: 10424267
 dataSources:
   - kind: substrate/Runtime
     startBlock: 4404637
