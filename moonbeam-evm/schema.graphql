@@ -22,11 +22,17 @@ type Extrinsic @entity {
 type EvmTransaction @entity {
   id: ID!
   txHash: String!
-  """A lowercase address of the sender"""
+  """
+  A lowercase address of the sender
+  """
   from: String! @index
-  """A lowercase address. This will be null for contract creations"""
+  """
+  A lowercase address. This will be null for contract creations
+  """
   to: String @index
-  """A lowercased function sighash extracted from the data field"""
+  """
+  A lowercased function sighash extracted from the data field
+  """
   func: String @index
   blockHeight: BigInt! @index
   success: Boolean!
@@ -34,15 +40,25 @@ type EvmTransaction @entity {
 
 type EvmLog @entity {
   id: ID!
-  """The contract address that emitted the event. Lowercased"""
+  """
+  The contract address that emitted the event. Lowercased
+  """
   address: String! @index
   blockHeight: BigInt! @index
-  """The lowercase event signature"""
-  topics0: String! @index
-  """The lowercase first indexed argument"""
+  """
+  The lowercase event signature
+  """
+  topics0: String @index
+  """
+  The lowercase first indexed argument
+  """
   topics1: String
-  """The lowercase second indexed argument"""
+  """
+  The lowercase second indexed argument
+  """
   topics2: String
-  """The lowercase third indexed argument"""
+  """
+  The lowercase third indexed argument
+  """
   topics3: String
 }
