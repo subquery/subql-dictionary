@@ -8,7 +8,7 @@
     "prepack": "rm -rf dist && npm build",
     "test": "subql build && subql-node test",
     "codegen": "subql codegen",
-    "publish": "SUBQL_ACCESS_TOKEN=\"Mzk4NDI4MjA=uARQrwN4SdXKdJn0bCEh\" subql publish",
+    "publish": "SUBQL_ACCESS_TOKEN=\"\" subql publish",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans"
   },
   "homepage": "https://github.com/zenchain-protocol/subql-dictionary",
