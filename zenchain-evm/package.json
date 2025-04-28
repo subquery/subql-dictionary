@@ -1,6 +1,6 @@
 {
   "name": "zenchain-evm-dictionary",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "subquery dictionary for ZenChain",
   "main": "dist/index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "prepack": "rm -rf dist && npm build",
     "test": "subql build && subql-node test",
     "codegen": "subql codegen",
-    "publish": "SUBQL_ACCESS_TOKEN=\"\" subql publish",
+    "publish": "SUBQL_ACCESS_TOKEN=\"Mzk4NDI4MjA=uARQrwN4SdXKdJn0bCEh\" subql publish",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans"
   },
   "homepage": "https://github.com/zenchain-protocol/subql-dictionary",
@@ -24,16 +24,16 @@
     "ipfs-unixfs": "6.0.6"
   },
   "devDependencies": {
-    "@polkadot/api": "15.9.2",
+    "@polkadot/api": "10.13.1",
     "@polkadot/api-augment": "^15.9.2",
-    "@subql/cli": "5.8.1",
+    "@subql/cli": "5.6.1-0",
     "@subql/common-ethereum": "latest",
     "@subql/common-substrate": "latest",
     "@subql/frontier-evm-processor": "latest",
     "@subql/node-ethereum": "latest",
     "@subql/testing": "latest",
-    "@subql/types": "latest",
-    "@subql/types-ethereum": "latest",
+    "@subql/types": "^1",
+    "@subql/types-ethereum": "^1",
     "abab": "latest",
     "typescript": "^4.6.2"
   }
