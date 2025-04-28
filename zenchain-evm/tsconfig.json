@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "importHelpers": true,
+    "resolveJsonModule": true,
+    "module": "nodenext",
+    "outDir": "dist",
+    "rootDir": "src",
+    "target": "es2017"
+  },
+  "include": [
+    "src/**/*",
+    "node_modules/@subql/types-core/dist/global.d.ts",
+    "node_modules/@subql/types-ethereum/dist/global.d.ts"
+  ]
+}
