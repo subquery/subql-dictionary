@@ -1,0 +1,32 @@
+specVersion: 1.0.0
+name: SubQuery Dictionary - Bittensor
+version: 1.0.0
+runner:
+  node:
+    name: "@subql/node"
+    version: ">=6.0.3"
+    options:
+      unfinalizedBlocks: false
+      historical: false
+  query:
+    name: "@subql/query"
+    version: "*"
+description: >-
+  A SubQuery Dictionary Project that provides increased indexing speed to all
+  projects
+repository: "https://github.com/subquery/subql-dictionary"
+schema:
+  file: ./schema.graphql
+network:
+  chainId: "0x2f0555cc76fc2840a25a6ea3b9637146806f1f44b090c175ffde2a7e5ab36c03"
+  endpoint: "wss://bittensor-finney.api.onfinality.io/public-ws"
+  chaintypes:
+    file: ./dist/chaintypes.js
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler
