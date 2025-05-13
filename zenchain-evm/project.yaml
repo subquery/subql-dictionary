@@ -1,0 +1,30 @@
+specVersion: 1.0.0
+name: SubQuery Dictionary - ZenChain
+version: 1.0.0
+runner:
+  node:
+    name: '@subql/node'
+    version: '>=3.0.0'
+    options:
+      unfinalizedBlocks: false
+      historical: false
+  query:
+    name: '@subql/query'
+    version: '*'
+description: >-
+  A SubQuery Dictionary Project that provides increased indexing speed to all
+  projects
+repository: 'https://github.com/subquery/subql-dictionary'
+schema:
+  file: ./schema.graphql
+network:
+  chainId: '0xc5c6cfcb36d939cca22e9e13f8b75b29f40f689734da4a7ba561507398696efa'
+  endpoint: 'wss://zenchain-testnet.api.onfinality.io/public-ws'
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleBlock
+          kind: substrate/BlockHandler
