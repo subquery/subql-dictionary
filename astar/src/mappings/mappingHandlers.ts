@@ -1,8 +1,18 @@
-import assert from 'assert';
-import {Bytes} from '@polkadot/types';
-const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000';
-import {TransactionV2, EthTransaction ,AccountId, Address, EvmLog} from "@polkadot/types/interfaces"
-import {SubstrateExtrinsic,SubstrateBlock,SubstrateEvent} from "@subql/types";
+import assert from "assert";
+import { Bytes } from "@polkadot/types";
+const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
+import {
+  TransactionV2,
+  EthTransaction,
+  AccountId,
+  Address,
+  EvmLog,
+} from "@polkadot/types/interfaces";
+import {
+  SubstrateExtrinsic,
+  SubstrateBlock,
+  SubstrateEvent,
+} from "@subql/types";
 import {
   SpecVersion,
   Event,
@@ -10,17 +20,25 @@ import {
   EvmTransaction,
   ContractEmitted,
   ContractsCall,
-  EvmLog as EvmLogModel
+  EvmLog as EvmLogModel,
 } from "../types";
-import FrontierEvmDatasourcePlugin, { FrontierEvmCall } from "@subql/frontier-evm-processor/";
-import {inputToFunctionSighash, isZero, getSelector, wrapExtrinsics, wrapEvents} from "../utils";
-import {ApiPromise} from "@polkadot/api";
+import FrontierEvmDatasourcePlugin, {
+  FrontierEvmCall,
+} from "@subql/frontier-evm-processor/";
+import {
+  inputToFunctionSighash,
+  isZero,
+  getSelector,
+  wrapExtrinsics,
+  wrapEvents,
+} from "../utils";
+import { ApiPromise } from "@polkadot/api";
 
-export type ContractEmittedResult = [AccountId, Bytes]
+export type ContractEmittedResult = [AccountId, Bytes];
 
 export async function handleBlock(block: SubstrateBlock): Promise<void> {
   let specVersion = await SpecVersion.get(block.specVersion.toString());
-  if(!specVersion){
+  if (!specVersion) {
     specVersion = SpecVersion.create({
       id: block.specVersion.toString(),
       blockHeight: block.block.header.number.toBigInt(),
@@ -28,46 +46,73 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
     await specVersion.save();
   }
   const wrappedCalls = wrapExtrinsics(block);
-  const wrappedEvents = wrapEvents(wrappedCalls,block.events.filter(
+  const wrappedEvents = wrapEvents(
+    wrappedCalls,
+    block.events.filter(
       (evt) =>
-          !(evt.event.section === "system" &&
-              evt.event.method === "ExtrinsicSuccess")
-  ),block)
-  let events: Event[] =[]
-  let contractEmittedEvents: ContractEmitted[] =[];
-  let evmLogs: EvmLogModel[] =[];
-  wrappedEvents.filter(evt => evt.event.section!=='system' && evt.event.method!=='ExtrinsicSuccess').map(event=>{
-    events.push(handleEvent(event))
-    if (event.event.section === 'contracts' && (event.event.method === 'ContractEmitted' || event.event.method === 'ContractExecution')) {
-      contractEmittedEvents.push(handleContractsEmitted(event));
-    }
-    if(event.event.section === 'evm' && event.event.method === 'Log'){
-      evmLogs.push(handleEvmEvent(event));
-    }
-  })
+        !(
+          evt.event.section === "system" &&
+          evt.event.method === "ExtrinsicSuccess"
+        ),
+    ),
+    block,
+  );
+  let events: Event[] = [];
+  let contractEmittedEvents: ContractEmitted[] = [];
+  let evmLogs: EvmLogModel[] = [];
+  wrappedEvents
+    .filter(
+      (evt) =>
+        evt.event.section !== "system" &&
+        evt.event.method !== "ExtrinsicSuccess",
+    )
+    .map((event) => {
+      events.push(handleEvent(event));
+      if (
+        event.event.section === "contracts" &&
+        (event.event.method === "ContractEmitted" ||
+          event.event.method === "ContractExecution")
+      ) {
+        contractEmittedEvents.push(handleContractsEmitted(event));
+      }
+      if (event.event.section === "evm" && event.event.method === "Log") {
+        evmLogs.push(handleEvmEvent(event));
+      }
+    });
 
-  let calls: Extrinsic[] =[]
-  let contractCalls: ContractsCall[] =[];
-  let evmTransactions: EvmTransaction[] =[];
+  let calls: Extrinsic[] = [];
+  let contractCalls: ContractsCall[] = [];
+  let evmTransactions: EvmTransaction[] = [];
 
   for (const call of wrappedCalls) {
     calls.push(handleCall(call));
 
-    if (call.extrinsic.method.section === 'contracts' && call.extrinsic.method.method === 'call') {
+    if (
+      call.extrinsic.method.section === "contracts" &&
+      call.extrinsic.method.method === "call"
+    ) {
       contractCalls.push(handleContractCalls(call));
     }
     try {
-      if (call.extrinsic.method.section === 'ethereum' && call.extrinsic.method.method === 'transact') {
-        const [frontierEvmCall] = await FrontierEvmDatasourcePlugin.handlerProcessors['substrate/FrontierEvmCall'].transformer({
-          input: call as SubstrateExtrinsic<[TransactionV2 | EthTransaction]>,
-          ds: {} as any,
-          filter: undefined,
-          api: api as ApiPromise
-        });
-        evmTransactions.push(handleEvmTransaction(call.idx.toString(), frontierEvmCall));
+      if (
+        call.extrinsic.method.section === "ethereum" &&
+        call.extrinsic.method.method === "transact"
+      ) {
+        const [frontierEvmCall] =
+          await FrontierEvmDatasourcePlugin.handlerProcessors[
+            "substrate/FrontierEvmCall"
+          ].transformer({
+            input: call as SubstrateExtrinsic<[TransactionV2 | EthTransaction]>,
+            ds: {} as any,
+            filter: undefined,
+            api: api as ApiPromise,
+          });
+        evmTransactions.push(
+          handleEvmTransaction(call.idx.toString(), frontierEvmCall),
+        );
       }
     } catch (e) {
-      logger.warn(e, 'Failed to transform ethereum transaction, skipping');
+      logger.warn(e, "Failed to transform ethereum transaction, skipping");
       // Failed evm transaction skipped
     }
   }
@@ -77,22 +122,22 @@ export async function handleBlock(block: SubstrateBlock): Promise<void> {
   // We will put them into two promise for now.
   // All save order should always follow this structure
   for (const event of events) {
-    await event.save()
+    await event.save();
   }
   for (const call of calls) {
-    await call.save()
+    await call.save();
   }
   for (const evmLog of evmLogs) {
-    await evmLog.save()
+    await evmLog.save();
   }
   for (const evmTransaction of evmTransactions) {
-    await evmTransaction.save()
+    await evmTransaction.save();
   }
   for (const contractEmittedEvent of contractEmittedEvents) {
-    await contractEmittedEvent.save()
+    await contractEmittedEvent.save();
   }
   for (const contractCall of contractCalls) {
-    await contractCall.save()
+    await contractCall.save();
   }
 }
 
@@ -120,31 +165,36 @@ function handleEvmEvent(event: SubstrateEvent): EvmLogModel {
   let address;
   // let data;
   let topics;
-  const [log] = event.event.data as unknown as [{log:EvmLog} | EvmLog];
+  const [log] = event.event.data as unknown as [{ log: EvmLog } | EvmLog];
 
-  if((log as EvmLog).address){
-    address = (log as EvmLog).address
-    topics = (log as EvmLog).topics
-  }else{
-    address = (log as {log: EvmLog}).log.address;
-    topics = (log as {log: EvmLog}).log.topics;
+  if ((log as EvmLog).address) {
+    address = (log as EvmLog).address;
+    topics = (log as EvmLog).topics;
+  } else {
+    address = (log as { log: EvmLog }).log.address;
+    topics = (log as { log: EvmLog }).log.topics;
   }
   return EvmLogModel.create({
     id: `${event.block.block.header.number.toString()}-${event.idx}`,
     address: address.toString(),
-    blockHeight:event.block.block.header.number.toBigInt(),
-    topics0:topics[0].toHex().toLowerCase(),
-    topics1:topics[1]?.toHex().toLowerCase(),
-    topics2:topics[2]?.toHex().toLowerCase(),
-    topics3:topics[3]?.toHex().toLowerCase(),
+    blockHeight: event.block.block.header.number.toBigInt(),
+    topics0: topics[0].toHex().toLowerCase(),
+    topics1: topics[1]?.toHex().toLowerCase(),
+    topics2: topics[2]?.toHex().toLowerCase(),
+    topics3: topics[3]?.toHex().toLowerCase(),
   });
 }
 
-export function handleEvmTransaction(idx: string, tx: FrontierEvmCall): EvmTransaction {
+export function handleEvmTransaction(
+  idx: string,
+  tx: FrontierEvmCall,
+): EvmTransaction {
   if (!tx.hash || !tx.blockNumber) {
-    throw new Error('Invalid evm transaction');
+    throw new Error("Invalid evm transaction");
   }
-  const func = isZero(tx.data) ? undefined : inputToFunctionSighash(tx.data).toLowerCase();
+  const func = isZero(tx.data)
+    ? undefined
+    : inputToFunctionSighash(tx.data).toLowerCase();
   return EvmTransaction.create({
     id: `${tx.blockNumber.toString()}-${idx}`,
     txHash: tx.hash,
@@ -157,15 +207,17 @@ export function handleEvmTransaction(idx: string, tx: FrontierEvmCall): EvmTrans
   });
 }
 
-export function handleContractCalls(call:  SubstrateExtrinsic): ContractsCall {
-  const [dest,,,, data] = call.extrinsic.method.args;
+export function handleContractCalls(call: SubstrateExtrinsic): ContractsCall {
+  const [dest, , , , data] = call.extrinsic.method.args;
   assert(call.extrinsic.isSigned, "Contract calls must be signed");
 
   return ContractsCall.create({
     id: `${call.block.block.header.number.toString()}-${call.idx}`,
     from: call.extrinsic.signer.toString(),
     success: !call.events.find(
-        (evt) => evt.event.section === 'system' && evt.event.method === 'ExtrinsicFailed'
+      (evt) =>
+        evt.event.section === "system" &&
+        evt.event.method === "ExtrinsicFailed",
     ),
     dest: (dest as Address).toString(),
     blockHeight: call.block.block.header.number.toBigInt(),
@@ -173,14 +225,20 @@ export function handleContractCalls(call:  SubstrateExtrinsic): ContractsCall {
   });
 }
 
-export function handleContractsEmitted(event: SubstrateEvent):ContractEmitted{
+export function handleContractsEmitted(event: SubstrateEvent): ContractEmitted {
   const [contract, data] = event.event.data as unknown as ContractEmittedResult;
 
   return ContractEmitted.create({
     id: `${event.block.block.header.number.toString()}-${event.idx}`,
-    blockHeight:  event.block.block.header.number.toBigInt(),
+    blockHeight: event.block.block.header.number.toBigInt(),
     contract: contract.toString(),
-    from: event.extrinsic?.extrinsic.isSigned ? event.extrinsic.extrinsic.signer.toString(): EMPTY_ADDRESS,
-    eventIndex: data[0],
+    from: event.extrinsic?.extrinsic.isSigned
+      ? event.extrinsic.extrinsic.signer.toString()
+      : EMPTY_ADDRESS,
+    // Event index doesn't exist for versions >= 5.
+    // https://github.com/polkadot-js/api/blob/cb76a1db74f87aea87674076b1709c695a687f1d/packages/api-contract/src/Abi/index.ts#L192
+    // NOTE: this will probably not work with the datasource processor
+    // Example: https://astar.subscan.io/event/10039739-24
+    eventIndex: data[0] ?? -1,
   });
 }
