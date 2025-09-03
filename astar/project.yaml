@@ -30,4 +30,4 @@ dataSources:
           kind: substrate/BlockHandler
 parent:
   reference: "QmapQ6cNKPtZE1jkeUp5V6xy7sPSiJiZpoqZcRRtyc4Stq"
-  untilBlock: 7550923
+  untilBlock: 10039739
