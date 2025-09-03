@@ -3,23 +3,23 @@ name: SubQuery Dictionary - kilt-spiritnet
 version: 1.0.0
 runner:
   node:
-    name: '@subql/node'
-    version: '>=3.0.0'
+    name: "@subql/node"
+    version: ">=3.0.0"
     options:
       unfinalizedBlocks: false
       historical: false
   query:
-    name: '@subql/query'
-    version: '*'
+    name: "@subql/query"
+    version: "*"
 description: >-
   A SubQuery Dictionary Project that provides increased indexing speed to all
   projects
-repository: 'https://github.com/subquery/subql-dictionary'
+repository: "https://github.com/subquery/subql-dictionary"
 schema:
   file: ./schema.graphql
 network:
-  chainId: '0x411f057b9107718c9624d6aa4a3f23c1653898297f3d4d529d9bb6511a39dd21'
-  endpoint: 'wss://spiritnet.api.onfinality.io/public-ws'
+  chainId: "0x411f057b9107718c9624d6aa4a3f23c1653898297f3d4d529d9bb6511a39dd21"
+  endpoint: "wss://spiritnet.api.onfinality.io/public-ws"
   chaintypes:
     file: ./dist/chaintypes.js
 dataSources:
@@ -30,3 +30,6 @@ dataSources:
       handlers:
         - handler: handleBlock
           kind: substrate/BlockHandler
+parent:
+  reference: "QmeBTNuhahUo2EhTRxV3qVAVf5bC8zVQRrrHd3SUDXgtbF"
+  untilBlock: 7587490
