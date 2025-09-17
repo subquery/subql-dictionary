@@ -23,8 +23,8 @@ network:
   chaintypes:
     file: ./dist/chaintypes.js
 parent:
-  reference: QmUHAsweQYXYrY5Swbt1eHkUwnE5iLc7w9Fh62JY6guXEK
-  untilBlock: 9267518
+  reference: QmTK8vHsfTAoTZyYkiQruhKuwCb2bypj3PnFBcvxJFMJtQ
+  untilBlock: 12624353
 dataSources:
   - kind: substrate/Runtime
     startBlock: 1
@@ -33,6 +33,3 @@ dataSources:
       handlers:
         - handler: handleBlock
           kind: substrate/BlockHandler
-parent:
-  reference: "QmUHAsweQYXYrY5Swbt1eHkUwnE5iLc7w9Fh62JY6guXEK"
-  untilBlock: 8515634
