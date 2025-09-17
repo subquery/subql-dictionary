@@ -27,14 +27,16 @@
     "ipfs-unixfs": "6.0.6"
   },
   "devDependencies": {
-    "@polkadot/api": "^13",
+    "@polkadot/api": "^16",
     "@subql/cli": "latest",
-    "@subql/common-substrate": "^4.3.4",
-    "@subql/frontier-evm-processor": "^0.1.4",
+    "@subql/common-substrate": "^4.5.2",
+    "@subql/frontier-evm-processor": "^1.0.3",
     "@subql/testing": "^2.0.1",
     "@subql/types": "latest",
     "abab": "latest",
-    "moonbeam-types-bundle": "^2.0.7",
-    "typescript": "^4.6.2"
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@moonbeam-network/types-bundle": "^1.0.2"
   }
 }

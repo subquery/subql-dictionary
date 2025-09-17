@@ -2,5 +2,5 @@
 
 for file in ./project*.yaml; do
     echo "Publishing $file..."
-    npx subql publish -f "$file"
+    npx subql publish "$file"
 done
