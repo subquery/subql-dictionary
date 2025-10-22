@@ -7,7 +7,7 @@ export function inputToFunctionSighash(input: string): string {
 }
 
 export function isZero(input: string): boolean {
-  return stripZeros(input).length === 0;
+  return !input || stripZeros(input).length === 0;
 }
 
 function filterExtrinsicEvents(

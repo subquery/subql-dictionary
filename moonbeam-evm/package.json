@@ -29,7 +29,7 @@
   "devDependencies": {
     "@polkadot/api": "^16",
     "@subql/cli": "latest",
-    "@subql/common-substrate": "^4.5.2",
+    "@subql/common-substrate": "^4.5.4",
     "@subql/frontier-evm-processor": "^1.0.3",
     "@subql/testing": "^2.0.1",
     "@subql/types": "latest",

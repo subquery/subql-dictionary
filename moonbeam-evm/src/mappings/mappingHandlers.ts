@@ -153,6 +153,7 @@ export function handleEvmTransaction(
   if (!tx.hash) {
     return;
   }
+
   const func = isZero(tx.data)
     ? undefined
     : inputToFunctionSighash(tx.data).toLowerCase();

@@ -24,8 +24,8 @@ network:
   chaintypes:
     file: ./dist/chaintypes.js
 parent:
-  reference: QmcCxyskGqZBQw8LPuT619GzuqeJspjmeJPEaAuWcsTfgn
-  untilBlock: 13744975
+  reference: QmVpWBr7QFHuqNLBax1dcsAwrUejMEM8WrmacR4dYNzF2W
+  untilBlock: 14070260
 dataSources:
   - kind: substrate/Runtime
     startBlock: 4404637
