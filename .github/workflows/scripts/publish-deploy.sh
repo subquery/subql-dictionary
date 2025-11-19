@@ -14,13 +14,13 @@ done
 
 cd "$FILE" || exit
 
-if [ "$YAML" != undefined ]
-  then
-    IPFSCID=$(npx subql publish -o -f"$ROOTPATH/$FILE/$YAML")
-  else
+# Check if YAML is defined and set IPFSCID and ENDPOINT accordingly
+if [ -n "$YAML" ]; then
+    IPFSCID=$(npx subql publish -o -f "$ROOTPATH/$FILE/$YAML")
+    ENDPOINT=$(yq e '.network.endpoint' "$ROOTPATH/$FILE/$YAML")
+else
     IPFSCID=$(npx subql publish -o -f "$ROOTPATH/$FILE")
+    ENDPOINT=$(yq e '.network.endpoint' "$ROOTPATH/$FILE/project.yaml")
 fi
 
-IPFSCID=$(npx subql publish -o -f "$ROOTPATH/$FILE")
-
-npx subql deployment:deploy -d --ipfsCID="$IPFSCID" --projectName="${PROJECTNAME}" --org="${ORG%/*}"
+npx subql deployment:deploy -d --ipfsCID="$IPFSCID" --projectName="${PROJECTNAME}" --org="${ORG%/*}" --endpoint="${ENDPOINT}"
